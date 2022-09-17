@@ -1,0 +1,16 @@
+<launch>
+<param name="language" value="en_US" />
+
+<node pkg="utbots_at_home_voice" type="subscreve" name="subscreve_node"
+      output="log" required="true" args="">
+</node>
+
+<node pkg="utbots_at_home_voice" type="pubsub1" name="pubsub_node"
+      output="log" required="true" args="">
+</node>
+
+<node pkg="utbots_at_home_voice" type="listen.py" name="listen_node"
+      output="screen" required="true" args="">
+</node>
+
+</launch>
