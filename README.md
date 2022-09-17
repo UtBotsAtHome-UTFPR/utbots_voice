@@ -19,11 +19,12 @@
     - Rodar MaryTTS e nodo ROS
         - Launch
             - ```roslaunch voztts vozttp.launch```
-        - Para testar o text-to-speech
+        - Para testar
+            - ```rostopic pub /emotion std_msgs/String "joy"```
             - ```rostopic pub /tts std_msgs/String "HELLO WORLD"```
-        - Para testar a emoção (mudar emoção e depois publicar outra mensagem tts)
             - ```rostopic pub /emotion std_msgs/String "rage"```
-        - Tópicos do nodo voztts
+            - ```rostopic pub /tts std_msgs/String "HELLO WORLD"```
+        - Nodo voztts (src/voztts.cpp)
             - Subscribers
                 - /tts (std_msgs/String)
                     - Texto a ser sintetizado
@@ -57,4 +58,24 @@
                         - "acceptance"
         
 - ### utbots_at_home_voice (para speech-to-text)
-    - PENDENTE
+    - Pré-requisitos
+        - ```python3 -m pip install nltk sklearn pandas```
+        - Instalar o APK no celular
+    - Launch
+        - ```roslaunch utbots_at_home_voice utbots_at_home_voicerecog.launch```
+    - Para testar
+        - Abrir o microfone no app e falar
+        - ```rostopic echo /text_recognized```
+        - Ver output do launch
+    - Nodos
+        - Nodo subscreve_node (src/subscribe.cpp)
+            - Subscribers:
+                - /Tablet/voice (std_msgs/String)
+        - Nodo pubsub_node (src/publish.cpp)
+            - Publishers:
+                - /text_recognized (std_msgs/String)
+            - Subscribers:
+                - /Tablet/voice (std_msgs/String)
+        - Nodo listen_node (scripts/listen.py)
+            - Subscribers:
+                - /text_recognized (std_msgs/String)

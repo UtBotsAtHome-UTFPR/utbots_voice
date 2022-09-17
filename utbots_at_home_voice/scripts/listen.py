@@ -9,11 +9,29 @@ from sklearn.metrics.pairwise import linear_kernel
 from nltk import word_tokenize          
 from nltk.stem import WordNetLemmatizer
 import pandas as pd
-#nltk.download('wordnet')
+nltk.download('wordnet')
+nltk.download('punkt')
+nltk.download('omw-1.4')
 
-arqFrasesCorretas = '/home/fabro/catkin_ws/src/utbots_at_home_voice/scripts/FrasesCorretas.csv'
-arqRespostas = '/home/fabro/catkin_ws/src/utbots_at_home_voice/scripts/Respostas.csv'
-arqModelo = '/home/fabro/catkin_ws/src/utbots_at_home_voice/scripts/d2v_e1_v300.model'
+# arqFrasesCorretas = "?"
+# # arqRespostas = rospy.get_param("/arqRespostas")
+# # arqModelo = rospy.get_param("/arqModelo")
+# # arqFrasesCorretas = '/home/fabro/catkin_ws/src/utbots_at_home_voice/scripts/FrasesCorretas.csv'
+# arqRespostas = '/home/fabro/catkin_ws/src/utbots_at_home_voice/scripts/Respostas.csv'
+# arqModelo = '/home/fabro/catkin_ws/src/utbots_at_home_voice/scripts/d2v_e1_v300.model'
+arqFrasesCorretas = ""
+arqRespostas = ""
+arqModelo = ""
+
+rospy.init_node('listener', anonymous=True)
+
+print("\nArquivos:")
+arqFrasesCorretas = rospy.get_param("~arqFrasesCorretas")
+print(" - ", arqFrasesCorretas)
+arqRespostas = rospy.get_param("~arqRespostas")
+print(" - ", arqRespostas)
+arqModelo = rospy.get_param("~arqModelo")
+print(" - ", arqModelo)
 
 	
 class LemmaTokenizer:
@@ -25,7 +43,7 @@ class LemmaTokenizer:
 
 def identificar(frase):
 	tokenizer=LemmaTokenizer()
-	df = pd.read_csv(arqFrasesCorretas, delimiter=';',  encoding = "utf8", error_bad_lines=False)
+	df = pd.read_csv(arqFrasesCorretas, delimiter=';',  encoding = "utf8", on_bad_lines="warn")
 	corretas=[]
 	respostas=[]
 	for index, row in df.iterrows():
@@ -62,10 +80,8 @@ def callback(data):
     rospy.loginfo('')
 
 def listener():
-
-    rospy.init_node('listener', anonymous=True)
-    rospy.Subscriber('text_recognized', String, callback)
-    rospy.spin()
+	rospy.Subscriber('text_recognized', String, callback)
+	rospy.spin()
 
 if __name__ == '__main__':
     listener()

@@ -1,16 +1,19 @@
 <launch>
-<param name="language" value="en_US" />
+      <param name="language" value="en_US" />
 
-<node pkg="utbots_at_home_voice" type="subscreve" name="subscreve_node"
-      output="log" required="true" args="">
-</node>
+      <node pkg="utbots_at_home_voice" type="subscreve" name="subscreve_node"
+            output="log" required="true" args="">
+      </node>
 
-<node pkg="utbots_at_home_voice" type="pubsub1" name="pubsub_node"
-      output="log" required="true" args="">
-</node>
+      <node pkg="utbots_at_home_voice" type="pubsub1" name="pubsub_node"
+            output="log" required="true" args="">
+      </node>
 
-<node pkg="utbots_at_home_voice" type="listen.py" name="listen_node"
-      output="screen" required="true" args="">
-</node>
+      <node pkg="utbots_at_home_voice" type="listen.py" name="listen_node" output="screen" args="">
+        <param name="autosize" value="true" />
+        <param name="arqFrasesCorretas" value="$(find utbots_at_home_voice)/scripts/FrasesCorretas.csv" />
+        <param name="arqRespostas" value="$(find utbots_at_home_voice)/scripts/Respostas.csv" />
+        <param name="arqModelo" value="$(find utbots_at_home_voice)/scripts/d2v_e1_v300.model" />
+    </node>
 
 </launch>
