@@ -1,0 +1,3 @@
+[submodule "voztts"]
+	path = voztts
+	url = https://github.com/UtBot-UTFPR/voztts
