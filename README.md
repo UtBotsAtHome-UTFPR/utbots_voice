@@ -13,8 +13,8 @@
         - Baixar imagem do MaryTTS
             - ```sudo docker pull synesthesiam/marytts:5.2```
         - Rodar MaryTTS
-            - ```docker run -it -p 59125:59125 synesthesiam/marytts:5.2 --voice cmu-slt-hsmm```
-        - Ver no navegador se o server está disponível:
+            - ```sudo docker run -it -p 59125:59125 synesthesiam/marytts:5.2 --voice cmu-slt-hsmm```
+        - Ver no navegador se o server está disponível
             - ```http://localhost:59125/```
 - ### utbots_at_home_voice (para speech-to-text)
     - PENDENTE
