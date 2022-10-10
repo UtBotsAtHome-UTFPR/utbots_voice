@@ -13,7 +13,7 @@
         - Baixar imagem do MaryTTS
             - ```sudo docker pull synesthesiam/marytts:5.2```
         - Rodar MaryTTS
-            - ```sudo docker run -it -p 59125:59125 synesthesiam/marytts:5.2 --voice cmu-rms-hsmm``
+            - ```sudo docker run -it -p 59125:59125 synesthesiam/marytts:5.2 --voice cmu-rms-hsmm```
         - Ver no navegador se o server está disponível
             - ```http://localhost:59125/```
     - Rodar MaryTTS e nodo ROS
