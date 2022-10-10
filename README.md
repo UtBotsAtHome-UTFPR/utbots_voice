@@ -13,12 +13,12 @@
         - Baixar imagem do MaryTTS
             - ```sudo docker pull synesthesiam/marytts:5.2```
         - Rodar MaryTTS
-            - ```sudo docker run -it -p 59125:59125 synesthesiam/marytts:5.2 --voice cmu-rms-hsmm```
+            - ```sudo docker run -it -p 59125:59125 synesthesiam/marytts:5.2 --voice cmu-bdl-hsmm```
         - Ver no navegador se o server está disponível
             - ```http://localhost:59125/```
     - Rodar MaryTTS e nodo ROS
         - Launch (ele vai dar um prompt de senha que pode passar despercebido!!!)
-            - ```roslaunch voztts vozttp.launch```
+            - ```roslaunch voztts vozttp.launch autorestart:=true```
         - Para testar
             - ```rostopic pub /emotion std_msgs/String "joy"```
             - ```rostopic pub /tts std_msgs/String "HELLO WORLD"```
@@ -59,7 +59,7 @@
         
 - ### utbots_at_home_voice (para speech-to-text)
     - Pré-requisitos
-        - ```python3 -m pip install nltk sklearn pandas```
+        - ```python3 -m pip install nltk sklearn pandas gensim```
         - Instalar o APK no celular
     - Launch
         - ```roslaunch utbots_at_home_voice utbots_at_home_voicerecog.launch```
