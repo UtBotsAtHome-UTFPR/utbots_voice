@@ -17,7 +17,7 @@
         - Ver no navegador se o server está disponível
             - ```http://localhost:59125/```
     - Rodar MaryTTS e nodo ROS
-        - Launch
+        - Launch (ele vai dar um prompt de senha que pode passar despercebido!!!)
             - ```roslaunch voztts vozttp.launch```
         - Para testar
             - ```rostopic pub /emotion std_msgs/String "joy"```
