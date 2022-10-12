@@ -206,13 +206,15 @@ include_directories(
 ## Add folders to be run by python nosetests
 # catkin_add_nosetests(test)
 add_executable(pubsub1 src/bridge_sub_pub.cpp)
+add_dependencies(pubsub1 ${catkin_EXPORTED_TARGETS})
 target_link_libraries(pubsub1 ${catkin_LIBRARIES})
 
 add_executable(publica src/publish.cpp)
-target_link_libraries(publica ${catkin_LIBRARIES}) 
 add_dependencies(publica ${catkin_EXPORTED_TARGETS})
+target_link_libraries(publica ${catkin_LIBRARIES}) 
 
 add_executable(subscreve src/subscribe.cpp)
+add_dependencies(subscreve ${catkin_EXPORTED_TARGETS})
 target_link_libraries(subscreve ${catkin_LIBRARIES})
 
 catkin_install_python(PROGRAMS scripts/listen.py scripts/talk.py
