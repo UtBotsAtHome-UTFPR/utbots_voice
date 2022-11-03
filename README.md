@@ -62,7 +62,8 @@
         - ```python3 -m pip install nltk sklearn pandas gensim```
         - Instalar o APK no celular
     - Launch
-        - ```roslaunch utbots_at_home_voice utbots_at_home_voicerecog.launch```
+        - ```roslaunch utbots_at_home_voice utbots_at_home_voicerecog.launch``` Para perguntas e respostas
+        - ```roslaunch utbots_at_home_voice commands.launch``` Para escutar comandos de voz
     - Para testar
         - Abrir o microfone no app e falar
         - ```rostopic echo /text_recognized```
