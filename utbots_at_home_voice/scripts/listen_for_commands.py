@@ -44,8 +44,8 @@ class Listen:
 		self.esperandoPergunta = False
 		self.failed_call = False
 
-		self.pub_command = rospy.Publisher('/voice_commands', String, queue_size=1)
-		self.sub_recognized = rospy.Subscriber('text_recognized', String, self.callback)
+		self.pub_voice_command = rospy.Publisher('/voice_commands', String, queue_size=1)
+		self.sub_recognized = rospy.Subscriber('text_recognized', String, self.callback, queue_size=1)
 		self.pub_resposta = rospy.Publisher('/tts', String, queue_size=1)
 
 		self.loop()
@@ -69,22 +69,6 @@ class Listen:
 		return max_index, max_value, corretas[max_index], respostas[max_index]
 
 
-	def identificarDV(self, frase):
-		# Carrega base ja treinada
-		model = Doc2Vec.load(self.arqModelo)
-		test_data = nltk.word_tokenize(frase.lower())  # converte para lowercase
-		v1 = model.infer_vector(test_data)
-		# procura frases similades na base treinada
-		similar_doc = model.docvecs.most_similar([v1])
-		df = pd.read_csv(self.arqFrasesCorretas, delimiter=';',
-						encoding="utf8", error_bad_lines=False)
-		for sim in similar_doc:
-			docId = int(sim[0])
-			encontrado = df.loc[df['id'] == docId]  # frase similar encontrada
-			prob = sim[1]
-			return docId, prob, encontrado['text'].iloc[0].strip()
-
-
 	def callback(self, data):
 
 		data.data = data.data.lower()
@@ -99,35 +83,19 @@ class Listen:
 		rospy.loginfo('The answer is: %s', respostaEncontrada)
 		rospy.loginfo('')
 
-		if fraseEncontrada == "Apollo" or fraseEncontrada == "Follow" or fraseEncontrada == "Hello" or fraseEncontrada == "Barlow" or fraseEncontrada == "Hello Apollo":
+		if respostaEncontrada == "Apollo" and ~(self.esperandoPergunta):
 			self.esperandoPergunta = True
 			rospy.loginfo('Apollo: someone called me!')
-			self.pub_resposta.publish(respostaEncontrada)
+			self.pub_resposta.publish("Yes")
 		elif self.esperandoPergunta == True:
 			rospy.loginfo('Apollo: publishing answer to listed question')
 			self.esperandoPergunta = False
-			msg_setAngle = set_angles()
-			msg_setAngle.set_Kp_GAR = 0.3
-			if respostaEncontrada == "Hold":
-				self.pub_resposta.publish("Closing hand now, bruh. When you're ready, call my name, wait and say follow me")
-				self.pub_command.publish("Hold")
-				msg_setAngle.set_GAR = 120
-				self.pub_setAngle.publish(msg_setAngle)
-				rospy.loginfo('Apollo: someone called me!')
-			elif respostaEncontrada == "Carry my luggage":
-				self.pub_resposta.publish("Ok. Put the bag in my hand, call my name, wait and say hold")
-				msg_setAngle.set_GAR = 180
-				self.pub_setAngle.publish(msg_setAngle)
-			elif respostaEncontrada == "Follow me":
-				self.pub_resposta.publish("I will follow you, bruh. When we reach the car, call my name, wait and say stop")
-				self.pub_command.publish("Follow me")
-			elif(respostaEncontrada == "Stop"):
-				self.pub_resposta.publish("I will stop now, bruh. I will open my hand, pick up your bag, please")
-				self.pub_command.publish("Stop")
-				msg_setAngle.set_GAR = 180
-				self.pub_setAngle.publish(msg_setAngle)
-			else:
-				self.pub_resposta.publish(respostaEncontrada)
+			#msg_setAngle = set_angles()
+			#msg_setAngle.set_Kp_GAR = 0.3 
+			self.pub_voice_command.publish(respostaEncontrada)
+			if(respostaEncontrada == "yes") or "yes" in data.data:
+				self.esperandoPergunta = True
+
 		sleep(3)
 
 	def loop(self):
