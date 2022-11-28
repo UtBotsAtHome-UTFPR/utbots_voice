@@ -1,81 +1,26 @@
-# apollo_voice
+# apollo_voice: pacotes ROS de text-to-speech (TTS) e speech-to-text (STT)
+- Para TTS, usamos Coqui TTS (sucessor do Mozilla TTS)
+- Para STT, usamos whisper.cpp (implementação de alta performance do OpenAI Whisper)
+- Portanto, os pacotes desse repositório apenas implementam uma interface via ROS para os programas referidos
 
-## Para clonar
-- ```git clone --recurse-submodules https://github.com/UtBot-UTFPR/apollo_voice.git```
-
-## Pacotes
-- ### voztts (para text-to-speech)
-    - Pré-requisitos
-        - ```sudo apt install docker mplayer```
-    - MaryTTS
-        - O que é
-            - API de TTS
-        - Baixar imagem do MaryTTS
-            - ```sudo docker pull synesthesiam/marytts:5.2```
-        - Rodar MaryTTS
-            - ```sudo docker run -it -p 59125:59125 synesthesiam/marytts:5.2 --voice cmu-bdl-hsmm```
-        - Ver no navegador se o server está disponível
-            - ```http://localhost:59125/```
-    - Rodar MaryTTS e nodo ROS
-        - Launch (ele vai dar um prompt de senha que pode passar despercebido!!!)
-            - ```roslaunch voztts vozttp.launch autorestart:=true```
-        - Para testar
-            - ```rostopic pub /emotion std_msgs/String "joy"```
-            - ```rostopic pub /tts std_msgs/String "HELLO WORLD"```
-            - ```rostopic pub /emotion std_msgs/String "rage"```
-            - ```rostopic pub /tts std_msgs/String "HELLO WORLD"```
-        - Nodo voztts (src/voztts.cpp)
-            - Subscribers
-                - /tts (std_msgs/String)
-                    - Texto a ser sintetizado
-                - /emotion (std_msgs/String)
-                    - Altera o tom de voz
-                    - Emoções possíveis
-                        - "rage"
-                        - "annoyance"
-                        - "anger"
-                        - "idle"
-                        - "terror"
-                        - "fear"
-                        - "apprehension"
-                        - "ecstasy"
-                        - "joy"
-                        - "serenity"
-                        - "grief"
-                        - "sadness"
-                        - "pensiveness"
-                        - "vigilance"
-                        - "antecipation"
-                        - "interest"
-                        - "loathing"
-                        - "disgust"
-                        - "boredom"
-                        - "amazement"
-                        - "surprise"
-                        - "distraction"
-                        - "admiration"
-                        - "trust"
-                        - "acceptance"
-        
-- ### utbots_at_home_voice (para speech-to-text)
-    - Pré-requisitos
-        - ```python3 -m pip install nltk sklearn pandas gensim```
-        - Instalar o APK no celular
-    - Launch
-        - ```roslaunch utbots_at_home_voice utbots_at_home_voicerecog.launch```
-    - Para testar
-        - Abrir o microfone no app e falar
-        - ```rostopic echo /text_recognized```
-        - Ver output do launch
-    - Nodos
-        - Nodo subscreve_node (src/subscribe.cpp)
-            - Subscribers:
-                - /Tablet/voice (std_msgs/String)
-        - Nodo pubsub_node (src/publish.cpp)
-            - Publishers:
-                - /text_recognized (std_msgs/String)
-            - Subscribers:
-                - /Tablet/voice (std_msgs/String)
-        - Nodo listen_node (scripts/listen.py)
-            - Subscribers:
-                - /text_recognized (std_msgs/String)
+## Setup do pacote
+- ### Clonar repositório do pacote
+    - ```git clone https://github.com/UtBot-UTFPR/apollo_voice.git```
+- ### TTS
+    - Instalar o TTS
+        - TODO
+    - Baixar modelos
+        - TODO
+- ### STT
+    - Clonar repositório do whisper.cpp e compilar
+        - ```cd ~/catkin_ws/apollo_voice```
+        - ```git clone https://github.com/ggerganov/whisper.cpp.git```
+        - ```cd whisper.cpp && make```
+    - Baixar modelos
+        - ```cd ~/catkin_ws/apollo_voice```
+        - ```wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin -O resources/models/ggml-base.en.bin```
+        - ```wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.bin -O resources/models/ggml-base.bin```
+    - Instalar dependências de processamento de áudio
+        - ```python3 -m pip install soundfile librosa noisereduce```
+    - Executar o programa
+        - ```rosrun apollo_voice ros_stt.py```
