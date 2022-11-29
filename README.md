@@ -1,4 +1,4 @@
-# apollo_voice: pacotes ROS de text-to-speech (TTS) e speech-to-text (STT)
+# apollo_voice: pacotes ROS de text-to-speech (TTS) e speech-to-text (STT)!
 - Para TTS, usamos Coqui TTS (sucessor do Mozilla TTS)
 - Para STT, usamos whisper.cpp (implementação de alta performance do OpenAI Whisper)
 - Portanto, os pacotes desse repositório apenas implementam uma interface via ROS para os programas referidos
