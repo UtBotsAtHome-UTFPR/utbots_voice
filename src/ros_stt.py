@@ -6,8 +6,8 @@ from scipy.io import wavfile
 import noisereduce as nr
 
 # Configurable parameters
-wav_input = "../resources/wav/jfk.wav"
-language = "en" # en, pt
+wav_input = "../resources/wav/optimus.wav"
+language = "pt" # en, pt
 
 # Fixed parameters
 wav_resampled = "../resources/wav/stt_resampled.wav"
@@ -35,7 +35,7 @@ resampled_rate, resampled_data = wavfile.read(wav_resampled)
 
 # Performs noise reduction
 print("[STT] Performing noise reduction")
-reduced_noise = nr.reduce_noise(y=resampled_data, sr=resampled_rate)
+reduced_noise = nr.reduce_noise(y=resampled_data, sr=resampled_rate, stationary=False)
 
 # Stores new wav
 print("[STT] Writing reduced noise wav to {}".format(wav_reduced_noise))

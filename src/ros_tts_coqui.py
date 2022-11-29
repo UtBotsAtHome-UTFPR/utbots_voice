@@ -45,23 +45,25 @@ class SpeechSynthesisNode:
         rospy.init_node('tts', anonymous=True)
         rospy.loginfo("[TTS] Coqui TTS node init")
 
-        # TODO avoid this hardcoding
-        self.yourtts_model = "/home/driver/.local/share/tts/tts_models--multilingual--multi-dataset--your_tts/model_file.pth"
-        self.yourtts_config = "/home/driver/.local/share/tts/tts_models--multilingual--multi-dataset--your_tts/config.json"
-        self.tacotron_model = "/home/driver/.local/share/tts/tts_models--en--ljspeech--tacotron2-DDC/model_file.pth"
-        self.tacotron_config = "/home/driver/.local/share/tts/tts_models--en--ljspeech--tacotron2-DDC/config.json"
-        self.hifigan_v2_model = "/home/driver/.local/share/tts/vocoder_models--en--ljspeech--hifigan_v2/model_file.pth"
-        self.hifigan_v2_config = "/home/driver/.local/share/tts/vocoder_models--en--ljspeech--hifigan_v2/config.json"
-        self.optimus_wav = "./optimus.wav"
-        self.pavarotti_wav = "./pavarotti.wav"
-        self.rocky_wav = "./rocky.wav"
-        self.bock_happy_wav = "./bock_happy.wav"
-        self.bock_sad_wav = "./bock_sad.wav"
-        self.bock_mad_wav = "./bock_mad.wav"
+        # Paths to models
+        self.yourtts_model = "~/.local/share/tts/tts_models--multilingual--multi-dataset--your_tts/model_file.pth"
+        self.yourtts_config = "~/.local/share/tts/tts_models--multilingual--multi-dataset--your_tts/config.json"
+        self.tacotron_model = "~/.local/share/tts/tts_models--en--ljspeech--tacotron2-DDC/model_file.pth"
+        self.tacotron_config = "~/.local/share/tts/tts_models--en--ljspeech--tacotron2-DDC/config.json"
+        self.hifigan_v2_model = "~/.local/share/tts/vocoder_models--en--ljspeech--hifigan_v2/model_file.pth"
+        self.hifigan_v2_config = "~/.local/share/tts/vocoder_models--en--ljspeech--hifigan_v2/config.json"
+        
+        # Paths to wavs
+        self.optimus_wav = "../resources/wav/optimus.wav"
+        self.pavarotti_wav = "../resources/wav/pavarotti.wav"
+        self.rocky_wav = "../resources/wav/rocky.wav"
+        self.bock_happy_wav = "../resources/wav/bock_happy.wav"
+        self.bock_sad_wav = "../resources/wav/bock_sad.wav"
+        self.bock_mad_wav = "../resources/wav/bock_mad.wav"
 
         # Parameters (TODO get them from launch)
-        speakingMode = "rocky"
-        languageMode = "en" # en, pt-br
+        speakingMode = "optimus"
+        languageMode = "pt-br" # en, pt-br
         self.ConfigTTSParameters(speakingMode, languageMode)
 
         # Loads model and configs
