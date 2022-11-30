@@ -1,4 +1,4 @@
-# apollo_voice: pacotes ROS de text-to-speech (TTS) e speech-to-text (STT)!
+# apollo_voice: pacotes ROS de text-to-speech (TTS) e speech-to-text (STT)
 - Para TTS, temos implementações de:
     - Coqui TTS (sucessor do Mozilla TTS)
     - Mimic3 (não tem português mas funciona muito bem em inglês)
