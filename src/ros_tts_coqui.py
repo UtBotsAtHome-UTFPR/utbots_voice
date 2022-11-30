@@ -13,7 +13,6 @@ from TTS.utils.synthesizer import Synthesizer
 from playsound import playsound
 
 # Reference: https://github.com/coqui-ai/TTS/blob/dev/TTS/server/server.py
-# TODO: testar modelos de https://github.com/Edresson/TTS-Portuguese-Corpus
 
 ''' 
     PARAMETERS NEEDED TO BE SET FOR TTS
@@ -62,7 +61,7 @@ class SpeechSynthesisNode:
         self.bock_mad_wav = "../resources/wav/bock_mad.wav"
 
         # Parameters (TODO get them from launch)
-        speakingMode = "optimus"
+        speakingMode = "bock_sad"
         languageMode = "pt-br" # en, pt-br
         self.ConfigTTSParameters(speakingMode, languageMode)
 
@@ -78,6 +77,8 @@ class SpeechSynthesisNode:
             encoder_config = "",
             use_cuda = self.param_use_cuda,)
         rospy.loginfo("[TTS] Synthesizer ok")
+
+        rospy.sleep(5)
 
         use_multi_speaker = hasattr(self.synthesizer.tts_model, "num_speakers") and (
             self.synthesizer.tts_model.num_speakers > 1 or self.synthesizer.tts_speakers_file is not None)

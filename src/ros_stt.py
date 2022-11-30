@@ -3,22 +3,27 @@ from os import system
 import librosa
 import soundfile
 from scipy.io import wavfile
-import noisereduce as nr
+import noisereduce
+import rospkg 
+
+# Gets path of this package
+packagePath = rospkg.RosPack().get_path('apollo_voice')
+print("[STT] Package path: {}".format(packagePath))
 
 # Configurable parameters
-wav_input = "../resources/wav/optimus.wav"
+wav_input = "{}/resources/wav/baka_gaijin.wav".format(packagePath)
 language = "pt" # en, pt
 
 # Fixed parameters
-wav_resampled = "../resources/wav/stt_resampled.wav"
-wav_reduced_noise = "../resources/wav/stt_reduced_noise.wav"
-whisper_main = "../whisper.cpp/main"
+wav_resampled = "{}/resources/wav/stt_resampled.wav".format(packagePath)
+wav_reduced_noise = "{}/resources/wav/stt_reduced_noise.wav".format(packagePath)
+whisper_main = "{}/whisper.cpp/main".format(packagePath)
 
 # Determines model based on language
 if language == "en":
-    model = "../resources/models/ggml-base.en.bin"
+    model = "{}/resources/models/ggml-base.en.bin".format(packagePath)
 else:
-    model = "../resources/models/ggml-base.bin"
+    model = "{}/resources/models/ggml-base.bin".format(packagePath)
 print("[STT] Model: {}".format(model))
 
 # Reads input wav
@@ -35,7 +40,7 @@ resampled_rate, resampled_data = wavfile.read(wav_resampled)
 
 # Performs noise reduction
 print("[STT] Performing noise reduction")
-reduced_noise = nr.reduce_noise(y=resampled_data, sr=resampled_rate, stationary=False)
+reduced_noise = noisereduce.reduce_noise(y=resampled_data, sr=resampled_rate, stationary=False)
 
 # Stores new wav
 print("[STT] Writing reduced noise wav to {}".format(wav_reduced_noise))
