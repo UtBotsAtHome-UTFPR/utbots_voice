@@ -113,6 +113,7 @@ Talk to the Android device and run
         - /text_recognized (std_msgs/String)
 
 ### ros_display_emotions
+
 ROS package that displays emotions through faces. Working in Kinetic and Melodic.
 
 Please install the following dependencies before running the package:
