@@ -1,7 +1,7 @@
 # apollo_voice: pacotes ROS de text-to-speech (TTS) e speech-to-text (STT)!
 - Para TTS, temos implementações de:
     - Coqui TTS (sucessor do Mozilla TTS)
-    - Mimic3 (idiomas limitados, não tem português mas funciona muito bem em inglês)
+    - Mimic3 (não tem português mas funciona muito bem em inglês)
 - Para STT, usamos whisper.cpp (implementação de alta performance do OpenAI Whisper)
 - Portanto, os pacotes desse repositório apenas implementam uma interface via ROS para os programas referidos
 
@@ -25,7 +25,7 @@
     # Executar o programa
     rosrun apollo_voice ros_stt.py
     ```
-- ### Mimic3
+- ### Mimic3 (https://github.com/MycroftAI/mimic3)
     ```bash
     # Baixar mimic3
     cd ~/Downloads
