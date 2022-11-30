@@ -18,6 +18,7 @@
     make
     # Baixar modelos
     roscd apollo_voice
+    mkdir -p resources/models/
     wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin -O resources/models/ggml-base.en.bin
     wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.bin -O resources/models/ggml-base.bin
     # Instalar dependências de processamento de áudio
