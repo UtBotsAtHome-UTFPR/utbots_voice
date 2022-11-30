@@ -1,82 +1,115 @@
-# apollo_voice
+# utbots_voice
 
-## Para clonar
-- ```git clone --recurse-submodules https://github.com/UtBot-UTFPR/apollo_voice.git```
+This stack contains text-to-speech, speech-to-text and face emotions packages.
 
-## Pacotes
-- ### voztts (para text-to-speech)
-    - Pré-requisitos
-        - ```sudo apt install docker mplayer```
-    - MaryTTS
-        - O que é
-            - API de TTS
-        - Baixar imagem do MaryTTS
-            - ```sudo docker pull synesthesiam/marytts:5.2```
-        - Rodar MaryTTS
-            - ```sudo docker run -it -p 59125:59125 synesthesiam/marytts:5.2 --voice cmu-bdl-hsmm```
-        - Ver no navegador se o server está disponível
-            - ```http://localhost:59125/```
-    - Rodar MaryTTS e nodo ROS
-        - Launch (ele vai dar um prompt de senha que pode passar despercebido!!!)
-            - ```roslaunch voztts vozttp.launch autorestart:=true```
-        - Para testar
-            - ```rostopic pub /emotion std_msgs/String "joy"```
-            - ```rostopic pub /tts std_msgs/String "HELLO WORLD"```
-            - ```rostopic pub /emotion std_msgs/String "rage"```
-            - ```rostopic pub /tts std_msgs/String "HELLO WORLD"```
-        - Nodo voztts (src/voztts.cpp)
-            - Subscribers
-                - /tts (std_msgs/String)
-                    - Texto a ser sintetizado
-                - /emotion (std_msgs/String)
-                    - Altera o tom de voz
-                    - Emoções possíveis
-                        - "rage"
-                        - "annoyance"
-                        - "anger"
-                        - "idle"
-                        - "terror"
-                        - "fear"
-                        - "apprehension"
-                        - "ecstasy"
-                        - "joy"
-                        - "serenity"
-                        - "grief"
-                        - "sadness"
-                        - "pensiveness"
-                        - "vigilance"
-                        - "antecipation"
-                        - "interest"
-                        - "loathing"
-                        - "disgust"
-                        - "boredom"
-                        - "amazement"
-                        - "surprise"
-                        - "distraction"
-                        - "admiration"
-                        - "trust"
-                        - "acceptance"
+## Installation
+```git clone --recurse-submodules https://github.com/UtBot-UTFPR/apollo_voice.git```
+
+## Packages
+
+### voztts (text-to-speech)
+
+**Dependencies**
+
+This package depends on docker and MaryTTS API for text-to-speech, running as a docker container.
+
+```
+sudo apt install docker mplayer
+sudo docker pull synesthesiam/marytts:5.2
+```
+
+**Running**
+
+First, run MaryTTS as a docker container
+
+```sudo docker run -it -p 59125:59125 synesthesiam/marytts:5.2 --voice cmu-bdl-hsmm```
+
+You can check if the server is available
+
+```http://localhost:59125/```
+
+Then, run the launchfile (system password is required)
+
+```roslaunch voztts vozttp.launch autorestart:=true```
+
+**Test commands**
+
+```rostopic pub /emotion std_msgs/String "joy"```
+
+```rostopic pub /tts std_msgs/String "HELLO WORLD"```
+
+```rostopic pub /emotion std_msgs/String "rage"```
+
+```rostopic pub /tts std_msgs/String "HELLO WORLD"```
+
+**Nodes**
+
+Subscribers
+
+- /tts (std_msgs/String)
+Text to be synthesized
+- /emotion (std_msgs/String)
+Changes the voice tone
+
+Possible emotions
+- "rage"
+- "annoyance"
+- "anger"
+- "idle"
+- "terror"
+- "fear"
+- "apprehension"
+- "ecstasy"
+- "joy"
+- "serenity"
+- "grief"
+- "sadness"
+- "pensiveness"
+- "vigilance"
+- "antecipation"
+- "interest"
+- "loathing"
+- "disgust"
+- "boredom"
+- "amazement"
+- "surprise"
+- "distraction"
+- "admiration"
+- "trust"
+- "acceptance"
+
+## utbots_at_home_voice (para speech-to-text)
+
+**Dependencies**
+An Android device is required with the ROS Voice Recognition apk installed.
+
+Install the needed python libraries with the following command
+
+```python3 -m pip install nltk sklearn pandas gensim```
+
+**Running**
+
+```roslaunch utbots_at_home_voice utbots_at_home_voicerecog.launch``` For the question and answers task
+
+```roslaunch utbots_at_home_voice commands.launch``` For listening to voice commands
+
+**Testing**
+Talk to the Android device and run
+
+```rostopic echo /text_recognized```
+
+**Nodes**
+
+- subscreve_node (src/subscribe.cpp)
+    - Subscribers:
+        - /Tablet/voice (std_msgs/String)
+- pubsub_node (src/publish.cpp)
+    - Publishers:
+        - /text_recognized (std_msgs/String)
+    - Subscribers:
+        - /Tablet/voice (std_msgs/String)
+- listen_node (scripts/listen.py)
+    - Subscribers:
+        - /text_recognized (std_msgs/String)
         
-- ### utbots_at_home_voice (para speech-to-text)
-    - Pré-requisitos
-        - ```python3 -m pip install nltk sklearn pandas gensim```
-        - Instalar o APK no celular
-    - Launch
-        - ```roslaunch utbots_at_home_voice utbots_at_home_voicerecog.launch``` Para perguntas e respostas
-        - ```roslaunch utbots_at_home_voice commands.launch``` Para escutar comandos de voz
-    - Para testar
-        - Abrir o microfone no app e falar
-        - ```rostopic echo /text_recognized```
-        - Ver output do launch
-    - Nodos
-        - Nodo subscreve_node (src/subscribe.cpp)
-            - Subscribers:
-                - /Tablet/voice (std_msgs/String)
-        - Nodo pubsub_node (src/publish.cpp)
-            - Publishers:
-                - /text_recognized (std_msgs/String)
-            - Subscribers:
-                - /Tablet/voice (std_msgs/String)
-        - Nodo listen_node (scripts/listen.py)
-            - Subscribers:
-                - /text_recognized (std_msgs/String)
+        
