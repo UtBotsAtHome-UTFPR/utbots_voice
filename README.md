@@ -9,11 +9,13 @@
 - ### Clonar repositório pacote
     - ```git clone https://github.com/UtBot-UTFPR/apollo_voice.git```
 - ### whisper.cpp (https://github.com/ggerganov/whisper.cpp)
-```bash
-    # Clonar repositório do whisper.cpp e compilar
+    ```bash
+    # Clonar repositório do whisper.cpp
     roscd apollo_voice
     git clone https://github.com/ggerganov/whisper.cpp.git
-    cd whisper.cpp && make
+    cd whisper.cpp/
+    # Compilar
+    make
     # Baixar modelos
     roscd apollo_voice
     wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin -O resources/models/ggml-base.en.bin
@@ -22,9 +24,9 @@
     python3 -m pip install soundfile librosa noisereduce
     # Executar o programa
     rosrun apollo_voice ros_stt.py
-```
+    ```
 - ### Mimic3
-```
+```bash
 # Baixar mimic3
 cd ~/Downloads
 wget https://github.com/MycroftAI/mimic3/releases/download/release%2Fv0.2.4/mycroft-mimic3-tts_0.2.4_amd64.deb
