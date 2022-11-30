@@ -1,3 +1,6 @@
 [submodule "voztts"]
 	path = voztts
 	url = https://github.com/UtBot-UTFPR/voztts
+[submodule "display_emotions"]
+	path = display_emotions
+	url = https://github.com/UtBotsAtHome-UTFPR/display_emotions.git
