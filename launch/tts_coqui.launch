@@ -1,0 +1,8 @@
+<launch>
+
+    <node pkg="utbots_voice" type="ros_tts_coqui.py" name="ros_tts_coqui" output="screen">
+        <param name="speaking_mode" value="bock_happy" />
+        <param name="language_mode" value="pt-br" />
+    </node>
+
+</launch>

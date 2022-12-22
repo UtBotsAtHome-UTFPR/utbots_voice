@@ -34,7 +34,7 @@
     wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin -O ./ggml-base.en.bin # english only
     wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.bin -O ./ggml-base.bin # works with multiple languages
 
-    # Install Python dependencies of audio processing
+    # Install Python dependencies
     python3 -m pip install soundfile librosa noisereduce
 
     # Run the test program (it tries to transcript wav from resources/wav/samples/baka_gaijin.wav)
@@ -62,11 +62,17 @@
     # Install TTS
     python3 -m pip install TTS
 
+    # Install Python dependencies
+    python3 -m pip install playsound
+
     # Download models (they will be placed at ~/.local/share/tts/)
     cd /tmp
     tts --text "This command will download models" --model_name "tts_models/en/ljspeech/tacotron2-DDC" --vocoder_name "vocoder_models/en/ljspeech/hifigan_v2" --out_path speech.wav
     tts  --text "Isso vai baixar os modelos" --model_name tts_models/multilingual/multi-dataset/your_tts  --speaker_wav speech.wav --language_idx "pt-br"
+
+    # Test the Coqui TTS ROS node
+    rosrun utbots_voice ros_tts_coqui.py
+    rostopic pub /voice/tts/text std_msgs/String 'Olá mundo!' # (in another terminal)
     ```
 
-
-        
+    
