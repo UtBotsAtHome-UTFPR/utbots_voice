@@ -50,6 +50,9 @@
 
     # Install with apt
     sudo apt install ./mycroft-mimic3-tts_0.2.4_amd64.deb
+
+    # Test it (it will probably download the model first)
+    mimic3 --voice en_US/hifi-tts_low 'Hello world' | aplay
     ```
 
 - ### Coqui TTS (https://github.com/coqui-ai/TTS)
