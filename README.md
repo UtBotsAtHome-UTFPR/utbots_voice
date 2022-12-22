@@ -37,18 +37,20 @@
     ```
 - ### Setup Mimic3 (https://github.com/MycroftAI/mimic3)
     ```bash
-    # Baixar mimic3
+    # Download mimic3
     cd ~/Downloads
     wget https://github.com/MycroftAI/mimic3/releases/download/release%2Fv0.2.4/mycroft-mimic3-tts_0.2.4_amd64.deb
-    # Instalar pelo apt
+
+    # Install with apt
     sudo apt install ./mycroft-mimic3-tts_0.2.4_amd64.deb
     ```
 
 - ### Coqui TTS (https://github.com/coqui-ai/TTS)
     ```bash
-    # Instalar o TTS
+    # Install TTS
     python3 -m pip install TTS
-    # Baixar modelos (ficarão na pasta ~/.local/share/tts/)
+
+    # Download models (when you call the tts command, they will be placed at ~/.local/share/tts/)
     cd /tmp
     tts --text "This command will download models" --model_name "tts_models/en/ljspeech/tacotron2-DDC" --vocoder_name "vocoder_models/en/ljspeech/hifigan_v2" --out_path speech.wav
     tts  --text "Isso vai baixar os modelos" --model_name tts_models/multilingual/multi-dataset/your_tts  --speaker_wav speech.wav --language_idx "pt-br"
