@@ -7,16 +7,16 @@ import noisereduce
 import rospkg 
 
 # Gets path of this package
-packagePath = rospkg.RosPack().get_path('apollo_voice')
+packagePath = rospkg.RosPack().get_path('utbots_voice')
 print("[STT] Package path: {}".format(packagePath))
 
 # Configurable parameters
-wav_input = "{}/resources/wav/baka_gaijin.wav".format(packagePath)
+wav_input = "{}/resources/wav/samples/baka_gaijin.wav".format(packagePath)
 language = "pt" # en, pt
 
 # Fixed parameters
-wav_resampled = "{}/resources/wav/stt_resampled.wav".format(packagePath)
-wav_reduced_noise = "{}/resources/wav/stt_reduced_noise.wav".format(packagePath)
+wav_resampled = "{}/resources/wav/tmp/stt_resampled.wav".format(packagePath)
+wav_reduced_noise = "{}/resources/wav/tmp/stt_reduced_noise.wav".format(packagePath)
 whisper_main = "{}/whisper.cpp/main".format(packagePath)
 
 # Determines model based on language

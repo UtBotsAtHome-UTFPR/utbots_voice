@@ -2,7 +2,7 @@
 - For TTS:
     - We have a ROS interface of Coqui TTS (Mozilla TTS successor, bleeding edge TTS).
     - We have a ROS interface of Mimic3 (works well in english and other languages but no portuguese at this moment).
-    - You probably don't need two TTS programs. For example, Mimic3 will be enough if only english is needed.
+    - You probably don't need two TTS programs. For example, Mimic3 will be very good if only english is needed.
 - For STT:
     - We have a ROS interface of whisper.cpp (high-performance implementation of OpenAI Whisper).
 
@@ -39,7 +39,7 @@
     # Install Python dependencies of audio processing
     python3 -m pip install soundfile librosa noisereduce
 
-    # Run the program
+    # Run the test program (it tries to transcript wav from resources/wav/samples/baka_gaijin.wav)
     rosrun utbots_voice ros_stt.py
     ```
 - ### Setup Mimic3 (https://github.com/MycroftAI/mimic3)
