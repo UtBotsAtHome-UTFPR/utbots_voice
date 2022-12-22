@@ -1,6 +1,6 @@
 # utbots_voice: ROS package of text-to-speech (TTS) and speech-to-text (STT)
 - For TTS:
-    - We have a ROS interface of Coqui TTS (Mozilla TTS successor, bleeding edge TTS).
+    - We have a ROS interface of Coqui TTS (Mozilla TTS successor, bleeding edge TTS that supports a variety of models).
     - We have a ROS interface of Mimic3 (works well in english and other languages but no portuguese at this moment).
     - You probably don't need two TTS programs. For example, Mimic3 will be very good if only english is needed.
 - For STT:
@@ -40,7 +40,7 @@
     # Run the test program (it tries to transcript wav from resources/wav/samples/baka_gaijin.wav)
     rosrun utbots_voice ros_stt.py
     ```
-- ### Setup Mimic3 (https://github.com/MycroftAI/mimic3)
+- ### Setup Mimic3 TTS (https://github.com/MycroftAI/mimic3)
     ```bash
     # Download mimic3
     cd ~/Downloads
@@ -62,7 +62,7 @@
     # Install TTS
     python3 -m pip install TTS
 
-    # Download models (when you call the tts command, they will be placed at ~/.local/share/tts/)
+    # Download models (they will be placed at ~/.local/share/tts/)
     cd /tmp
     tts --text "This command will download models" --model_name "tts_models/en/ljspeech/tacotron2-DDC" --vocoder_name "vocoder_models/en/ljspeech/hifigan_v2" --out_path speech.wav
     tts  --text "Isso vai baixar os modelos" --model_name tts_models/multilingual/multi-dataset/your_tts  --speaker_wav speech.wav --language_idx "pt-br"
