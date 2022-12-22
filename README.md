@@ -1,11 +1,10 @@
-# utbots_voice: pacote ROS de text-to-speech (TTS) e speech-to-text (STT)
 # utbots_voice: ROS package of text-to-speech (TTS) and speech-to-text (STT)
-- For TTS, we have implementations of:
-    - Coqui TTS (Mozilla TTS successor, bleeding edge TTS)
-    - Mimic3 (works well in english and other languages but no portuguese at this moment)
+- For TTS:
+    - We have a ROS interface of Coqui TTS (Mozilla TTS successor, bleeding edge TTS).
+    - We have a ROS interface of Mimic3 (works well in english and other languages but no portuguese at this moment).
+    - You probably don't need two TTS programs. For example, Mimic3 will be enough if only english is needed.
 - For STT:
-    - We use whisper.cpp (high-performance implementation of OpenAI Whisper)
-- Therefore, the nodes in this repository only interface the said programs with ROS
+    - We have a ROS interface of whisper.cpp (high-performance implementation of OpenAI Whisper).
 
 ## Setup
 - ### Clone package repository
@@ -36,7 +35,7 @@
     # Run the program
     rosrun utbots_voice ros_stt.py
     ```
-- ### Mimic3 (https://github.com/MycroftAI/mimic3)
+- ### Setup Mimic3 (https://github.com/MycroftAI/mimic3)
     ```bash
     # Baixar mimic3
     cd ~/Downloads
