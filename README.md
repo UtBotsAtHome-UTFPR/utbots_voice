@@ -30,10 +30,11 @@
     # Download models
     roscd utbots_voice
     mkdir -p resources/models/
+    cd resources/models/
     # Base model (english only)
-    wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin -O resources/models/ggml-base.en.bin
+    wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin -O ./ggml-base.en.bin
     # Model that works for other languages
-    wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.bin -O resources/models/ggml-base.bin
+    wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.bin -O ./ggml-base.bin
 
     # Install Python dependencies of audio processing
     python3 -m pip install soundfile librosa noisereduce
