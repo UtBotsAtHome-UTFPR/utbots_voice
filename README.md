@@ -7,9 +7,15 @@
     - We have a ROS interface of whisper.cpp (high-performance implementation of OpenAI Whisper).
 
 ## Setup
-- ### Clone package repository
+- ### Clone repository and compile workspace
     ```bash
+    # Clone repository
     git clone https://github.com/UtBotsAtHome-UTFPR/utbots_voice.git
+
+    # Compile workspace
+    cd ~/catkin_ws
+    catkin_make
+    source devel/setup.bash
     ```
 - ### Setup whisper.cpp (https://github.com/ggerganov/whisper.cpp)
     ```bash
