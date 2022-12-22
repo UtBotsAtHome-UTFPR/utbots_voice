@@ -51,8 +51,12 @@
     # Install with apt
     sudo apt install ./mycroft-mimic3-tts_0.2.4_amd64.deb
 
-    # Test it (it should take a small time to download the model)
+    # Test Mimic3 (it should take a small time to download the model)
     mimic3 --voice en_US/hifi-tts_low 'Hello world' | aplay
+
+    # Test the Mimic3 ROS node
+    rosrun utbots_voice ros_tts_mimic.py
+    rostopic pub /voice/tts/text std_msgs/String 'Hello world' # (in another terminal)
     ```
 
 - ### Coqui TTS (https://github.com/coqui-ai/TTS)

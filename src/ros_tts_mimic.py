@@ -10,7 +10,7 @@ class SpeechSynthesisNode:
         rospy.init_node('tts', anonymous=True)
         rospy.loginfo("[TTS] Mimic TTS node init")
         self.voice = "--voice en_US/hifi-tts_low"
-        self.sub_text = rospy.Subscriber("/tts/text", String, self.Callback)
+        self.sub_text = rospy.Subscriber("/voice/tts/text", String, self.Callback)
         self.loopRate = rospy.Rate(30)
         self.Say("Hello! I am Apollo, your service robot. Call me if you need anything.")
         self.MainLoop()

@@ -91,7 +91,7 @@ class SpeechSynthesisNode:
         rospy.loginfo("[TTS] use_gst: {}".format(use_gst))
 
         # Subscribers
-        self.sub_text = rospy.Subscriber("/tts/text", String, self.Callback)
+        self.sub_text = rospy.Subscriber("/voice/tts/text", String, self.Callback)
 
         # Says hello
         if languageMode == "en":
