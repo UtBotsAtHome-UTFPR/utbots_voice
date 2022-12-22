@@ -7,7 +7,7 @@
 
 ## Setup
 - ### Clonar repositório pacote
-    - ```git clone https://github.com/UtBot-UTFPR/utbots_voice.git```
+    - ```git clone https://github.com/UtBotsAtHome-UTFPR/utbots_voice.git```
 - ### whisper.cpp (https://github.com/ggerganov/whisper.cpp)
     ```bash
     # Clonar repositório do whisper.cpp
