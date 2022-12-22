@@ -1,29 +1,39 @@
 # utbots_voice: pacote ROS de text-to-speech (TTS) e speech-to-text (STT)
-- Para TTS, temos implementações de:
-    - Coqui TTS (sucessor do Mozilla TTS)
-    - Mimic3 (não tem português mas funciona muito bem em inglês)
-- Para STT, usamos whisper.cpp (implementação de alta performance do OpenAI Whisper)
-- Portanto, os pacotes desse repositório apenas implementam uma interface via ROS para os programas referidos
+# utbots_voice: ROS package of text-to-speech (TTS) and speech-to-text (STT)
+- For TTS, we have implementations of:
+    - Coqui TTS (Mozilla TTS successor, bleeding edge TTS)
+    - Mimic3 (works well in english and other languages but no portuguese at this moment)
+- For STT:
+    - We use whisper.cpp (high-performance implementation of OpenAI Whisper)
+- Therefore, the nodes in this repository only interface the said programs with ROS
 
 ## Setup
-- ### Clonar repositório pacote
-    - ```git clone https://github.com/UtBotsAtHome-UTFPR/utbots_voice.git```
-- ### whisper.cpp (https://github.com/ggerganov/whisper.cpp)
+- ### Clone package repository
     ```bash
-    # Clonar repositório do whisper.cpp
+    git clone https://github.com/UtBotsAtHome-UTFPR/utbots_voice.git
+    ```
+- ### Setup whisper.cpp (https://github.com/ggerganov/whisper.cpp)
+    ```bash
+    # Clone whisper.cpp
     roscd utbots_voice
     git clone https://github.com/ggerganov/whisper.cpp.git
     cd whisper.cpp/
-    # Compilar
+
+    # Compile
     make
-    # Baixar modelos
+
+    # Download models
     roscd utbots_voice
     mkdir -p resources/models/
+    # Base model (english only):
     wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin -O resources/models/ggml-base.en.bin
+    # Model that works for other languages:
     wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.bin -O resources/models/ggml-base.bin
-    # Instalar dependências de processamento de áudio
+
+    # Install Python dependencies of audio processing
     python3 -m pip install soundfile librosa noisereduce
-    # Executar o programa
+
+    # Run the program
     rosrun utbots_voice ros_stt.py
     ```
 - ### Mimic3 (https://github.com/MycroftAI/mimic3)
