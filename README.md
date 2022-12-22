@@ -1,4 +1,4 @@
-# apollo_voice: pacotes ROS de text-to-speech (TTS) e speech-to-text (STT)
+# utbots_voice: pacote ROS de text-to-speech (TTS) e speech-to-text (STT)
 - Para TTS, temos implementações de:
     - Coqui TTS (sucessor do Mozilla TTS)
     - Mimic3 (não tem português mas funciona muito bem em inglês)
@@ -7,24 +7,24 @@
 
 ## Setup
 - ### Clonar repositório pacote
-    - ```git clone https://github.com/UtBot-UTFPR/apollo_voice.git```
+    - ```git clone https://github.com/UtBot-UTFPR/utbots_voice.git```
 - ### whisper.cpp (https://github.com/ggerganov/whisper.cpp)
     ```bash
     # Clonar repositório do whisper.cpp
-    roscd apollo_voice
+    roscd utbots_voice
     git clone https://github.com/ggerganov/whisper.cpp.git
     cd whisper.cpp/
     # Compilar
     make
     # Baixar modelos
-    roscd apollo_voice
+    roscd utbots_voice
     mkdir -p resources/models/
     wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin -O resources/models/ggml-base.en.bin
     wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.bin -O resources/models/ggml-base.bin
     # Instalar dependências de processamento de áudio
     python3 -m pip install soundfile librosa noisereduce
     # Executar o programa
-    rosrun apollo_voice ros_stt.py
+    rosrun utbots_voice ros_stt.py
     ```
 - ### Mimic3 (https://github.com/MycroftAI/mimic3)
     ```bash
