@@ -9,3 +9,6 @@ mimic|en_US/hifi-tts_low|I am Apollo.|en_US|6.wav
 mimic|en_US/hifi-tts_low|I love robots. dont you?|en_US|7.wav
 coqui|bock_happy|Oi, amigo.|pt-br|8.wav
 coqui|bock_happy|Oi, amigão.|pt-br|9.wav
+mimic|en_US/hifi-tts_low|Hello world|en_US|10.wav
+mimic|en_US/hifi-tts_low|My name is Apollo. I belong to LASER.|en_US|11.wav
+coqui|bock_happy|Meu nome é Apollo.|pt-br|12.wav

@@ -12,7 +12,7 @@
     mimic3 --voice en_US/hifi-tts_low 'Hello world' | aplay
 
     # Test the Mimic3 ROS node
-    rosrun utbots_voice ros_tts_mimic.py
+    roslaunch utbots_tts tts_mimic.launch
     rostopic pub /voice/tts/text std_msgs/String 'Hello world' # (in another terminal)
     ```
 
@@ -30,6 +30,6 @@
     tts  --text "Isso vai baixar os modelos" --model_name tts_models/multilingual/multi-dataset/your_tts  --speaker_wav speech.wav --language_idx "pt-br"
 
     # Test the Coqui TTS ROS node
-    rosrun utbots_voice ros_tts_coqui.py
+    roslaunch utbots_tts tts_coqui.launch
     rostopic pub /voice/tts/text std_msgs/String 'Olá mundo!' # (in another terminal)
     ```
