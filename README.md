@@ -5,3 +5,15 @@
     - You probably don't need two TTS programs. For example, Mimic3 will be very good if only english is needed.
 - For STT:
     - We have a ROS interface of whisper.cpp (high-performance implementation of OpenAI Whisper).
+
+## Setup
+- ### Clone repository and compile workspace
+    ```bash
+    # Clone repository
+    git clone --recurse-submodules https://github.com/UtBotsAtHome-UTFPR/utbots_voice.git
+
+    # Compile workspace
+    cd ~/catkin_ws
+    catkin_make
+    source devel/setup.bash
+    ```

@@ -1,37 +1,4 @@
 ## Setup
-- ### Clone repository and compile workspace
-    ```bash
-    # Clone repository
-    git clone --recurse-submodules https://github.com/UtBotsAtHome-UTFPR/utbots_voice.git
-
-    # Compile workspace
-    cd ~/catkin_ws
-    catkin_make
-    source devel/setup.bash
-    ```
-- ### Setup whisper.cpp (https://github.com/ggerganov/whisper.cpp)
-    ```bash
-    # Clone whisper.cpp
-    roscd utbots_voice
-    git clone https://github.com/ggerganov/whisper.cpp.git
-    cd whisper.cpp/
-
-    # Compile
-    make
-
-    # Download models
-    roscd utbots_voice
-    mkdir -p resources/models/
-    cd resources/models/
-    wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin -O ./ggml-base.en.bin # english only
-    wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.bin -O ./ggml-base.bin # works with multiple languages
-
-    # Install Python dependencies
-    python3 -m pip install soundfile librosa noisereduce
-
-    # Run the test program (it tries to transcript wav from resources/wav/samples/baka_gaijin.wav)
-    rosrun utbots_voice ros_stt.py
-    ```
 - ### Setup Mimic3 TTS (https://github.com/MycroftAI/mimic3)
     ```bash
     # Download mimic3
