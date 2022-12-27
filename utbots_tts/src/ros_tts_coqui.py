@@ -50,7 +50,7 @@ class SpeechSynthesisNode:
         rospy.loginfo("[TTS] Coqui TTS node init")
 
         # Gets path of this package
-        self.packagePath = rospkg.RosPack().get_path('utbots_voice')
+        self.packagePath = rospkg.RosPack().get_path('utbots_tts')
         rospy.loginfo("[TTS] Package path: {}".format(self.packagePath))
 
         # Sets paths to models and sample wavs
@@ -77,7 +77,7 @@ class SpeechSynthesisNode:
         rospy.sleep(5)
 
         # Opens csv used for caching wavs
-        self.csvPath = self.packagePath + "/resources/wav/indexed/index.csv"
+        self.csvPath = self.packagePath + "/resources/audios/indexed/index.csv"
         rospy.loginfo("[TTS] Index CSV: {}".format(self.csvPath))
 
         # Fixes csv wav filenames
@@ -112,13 +112,13 @@ class SpeechSynthesisNode:
 
     def SetPathsToSampleWavs(self):
         # Paths to wavs
-        self.optimus_wav = self.packagePath + "/resources/wav/samples/optimus.wav"
-        self.pavarotti_wav = self.packagePath + "/resources/wav/samples/pavarotti.wav"
-        self.rocky_wav = self.packagePath + "/resources/wav/samples/rocky.wav"
+        self.optimus_wav = self.packagePath + "/resources/audios/samples/optimus.wav"
+        self.pavarotti_wav = self.packagePath + "/resources/audios/samples/pavarotti.wav"
+        self.rocky_wav = self.packagePath + "/resources/audios/samples/rocky.wav"
         self.bock_happy_wav = self.packagePath + \
-            "/resources/wav/samples/bock_happy.wav"
-        self.bock_sad_wav = self.packagePath + "/resources/wav/samples/bock_sad.wav"
-        self.bock_mad_wav = self.packagePath + "/resources/wav/samples/bock_mad.wav"
+            "/resources/audios/samples/bock_happy.wav"
+        self.bock_sad_wav = self.packagePath + "/resources/audios/samples/bock_sad.wav"
+        self.bock_mad_wav = self.packagePath + "/resources/audios/samples/bock_mad.wav"
 
     def ConfigSynthesizer(self):
         # Loads model and configs
@@ -316,7 +316,7 @@ class SpeechSynthesisNode:
 
     # Gets full wav path
     def GetWavPath(self, wav):
-        return "{}/resources/wav/indexed/{}".format(self.packagePath, wav)
+        return "{}/resources/audios/indexed/{}".format(self.packagePath, wav)
 
     # Main loop
     def MainLoop(self):

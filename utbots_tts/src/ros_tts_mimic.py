@@ -22,11 +22,11 @@ class SpeechSynthesisNode:
         rospy.loginfo("[TTS] Voice: {}".format(self.param_voice))
 
         # Gets path of this package
-        self.packagePath = rospkg.RosPack().get_path('utbots_voice')
+        self.packagePath = rospkg.RosPack().get_path('utbots_tts')
         rospy.loginfo("[TTS] Package path: {}".format(self.packagePath))
 
         # Opens csv used for caching wavs
-        self.csvPath = self.packagePath + "/resources/wav/indexed/index.csv"
+        self.csvPath = self.packagePath + "/resources/audios/indexed/index.csv"
         rospy.loginfo("[TTS] Index CSV: {}".format(self.csvPath))
 
         # Fixes csv wav filenames
@@ -164,14 +164,13 @@ class SpeechSynthesisNode:
 
     # Gets full wav path
     def GetWavPath(self, wav):
-        return "{}/resources/wav/indexed/{}".format(self.packagePath, wav)
+        return "{}/resources/audios/indexed/{}".format(self.packagePath, wav)
 
     # Main loop
     def MainLoop(self):
         rospy.loginfo("[TTS] Looping")
         while rospy.is_shutdown() == False:
             self.loopRate.sleep()
-
 
 if __name__ == "__main__":
     SpeechSynthesisNode()
