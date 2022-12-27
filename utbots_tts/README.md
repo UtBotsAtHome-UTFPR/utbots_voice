@@ -13,7 +13,7 @@
 
     # Test the Mimic3 ROS node
     roslaunch utbots_tts tts_mimic.launch
-    rostopic pub /voice/tts/text std_msgs/String 'Hello world' # (in another terminal)
+    rostopic pub /voice/tts/text std_msgs/String 'Hello world' # (in another terminal)-
     ```
 
 - ### Coqui TTS (https://github.com/coqui-ai/TTS)
