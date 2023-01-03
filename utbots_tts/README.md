@@ -1,5 +1,5 @@
 ## Setup
-- ### Setup Mimic3 TTS (https://github.com/MycroftAI/mimic3)
+- ### Mimic3 TTS (https://github.com/MycroftAI/mimic3)
     ```bash
     # Download mimic3
     cd ~/Downloads
