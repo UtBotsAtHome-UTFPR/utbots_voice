@@ -10,6 +10,7 @@
 - ### Clone repository and compile workspace
     ```bash
     # Clone repository
+    cd ~/catkin_ws/src
     git clone --recurse-submodules https://github.com/UtBotsAtHome-UTFPR/utbots_voice.git
 
     # Compile workspace
