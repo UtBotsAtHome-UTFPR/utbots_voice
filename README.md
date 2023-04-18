@@ -1,4 +1,4 @@
-# ROS packages of text-to-speech (TTS) and speech-to-text (STT)
+## ROS packages for handling human-robot interface
 ---
 ## Relevant information
 - **For TTS, we offer two different solutions:**
