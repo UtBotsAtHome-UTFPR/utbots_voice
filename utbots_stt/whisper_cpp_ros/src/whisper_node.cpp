@@ -2,6 +2,7 @@
 #include <ros/ros.h>
 #include <ros/package.h>
 #include <std_msgs/Int16MultiArray.h>
+#include <std_msgs/String.h>
 
 // Whisper
 #include "whisper.h"
@@ -41,7 +42,9 @@ class WhisperNode
 
     // ROS
     ros::NodeHandle nh;
-    ros::Subscriber sub_audio_data = nh.subscribe("audio/voice", 10, &WhisperNode::CallbackAudioData, this);
+    ros::Subscriber sub_audio_data = nh.subscribe("voice", 10, &WhisperNode::CallbackAudioData, this);
+    ros::Publisher  pub_output_text = nh.advertise<std_msgs::String>("whispered", 1);
+
 
     public:
         // Constructor
@@ -165,6 +168,12 @@ class WhisperNode
             std::string text("");
             for (int i = 0; i < n_segments; ++i)
                 text = text + whisper_full_get_segment_text(wsp_context, i);
+
+            // Publishes
+            std_msgs::String msg;
+            msg.data = text.c_str();
+            pub_output_text.publish(msg);
+            
             ROS_INFO("[WHISPER] Result: %s", text.c_str());
         }
 

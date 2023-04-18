@@ -1,3 +1,4 @@
 .vscode/*
 *.bin
 resources/models/*
+utbots_tts/resources/audios/indexed/*.wav

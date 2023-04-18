@@ -35,11 +35,11 @@ class SpeechSynthesisNode:
 
         # Subscribers
         self.sub_text = rospy.Subscriber(
-            "/voice/tts/text", String, self.Callback)
+            "robot_speech", String, self.Callback)
 
         # Publishers
         self.pub_finishedAudio = rospy.Publisher(
-            '/voice/tts/speech/finished', String, queue_size=1)
+            'is_robot_done_talking', String, queue_size=1)
 
         # Says hello
         self.TextToSpeech("Hello there.")
@@ -114,7 +114,7 @@ class SpeechSynthesisNode:
         csvContent = self.GetCsvContent(shouldPrint=False)
         NewWav = True
 
-        # Finds out if file is already indexed. If it is, Will play it before resynthesizing speech
+        # Finds out if file is already indexed. If it is, will play it before resynthesizing speech
         for index, row in csvContent.iterrows():
             if row["engine"] == "mimic" and row["voice"] == self.param_voice and row["phrase"] == text and row["language"] == "en_US":
                 NewWav = False
@@ -143,7 +143,8 @@ class SpeechSynthesisNode:
         })
 
         # Appends new row and saves the new csv
-        csvContent = csvContent.append(newRow).reset_index(drop=True)
+        # csvContent = csvContent.append(newRow).reset_index(drop=True)
+        csvContent = pandas.concat([csvContent, newRow], ignore_index=True)
         csvContent.to_csv(self.csvPath, index=False, sep="|")
         rospy.loginfo("[TTS] Saved new dataframe to {}".format(self.csvPath))
         csvContent = self.GetCsvContent(shouldPrint=False)

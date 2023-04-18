@@ -86,11 +86,11 @@ class SpeechSynthesisNode:
 
         # Subscribers
         self.sub_text = rospy.Subscriber(
-            "/voice/tts/text", String, self.Callback)
+            "robot_speech", String, self.Callback)
 
         # Publishers
         self.pub_finishedAudio = rospy.Publisher(
-            '/voice/tts/speech/finished', String, queue_size=1)
+            'is_robot_speech_finished', String, queue_size=1)
 
         # Says hello
         if self.param_languageMode == "en":

@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="nlu_ros" type="question_answerer.py" name="question_answerer" output="screen">
+        <param name="csv" value="questions-robocup-brazil-2022.csv" />
+    </node>
+</launch>

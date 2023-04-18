@@ -39,7 +39,7 @@ const int bit_depth     = 16;
 const int aux_samples                   = ms_buffer_vad_aux * sample_rate / 1000;
 
 // VAD SETTINGS
-std::string vad_model_path              = ros::package::getPath("whisper_cpp_ros") + "/models/silero_vad.onnx";
+std::string vad_model_path              = ros::package::getPath("vad_silero_ros") + "/models/silero_vad.onnx";
 const int   vad_sample_rate             = sample_rate;
 const int   vad_small_frame_ms          = ms_to_process_vad;
 const int   vad_small_window_samples    = vad_small_frame_ms * vad_sample_rate / 1000;
@@ -73,7 +73,7 @@ int main(int argc, char **argv)
     // ROS
     ros::init(argc, argv, "vad_node");
     ros::NodeHandle nh;
-    pub_audio = nh.advertise<std_msgs::Int16MultiArray>("audio/voice", 100);
+    pub_audio = nh.advertise<std_msgs::Int16MultiArray>("voice", 100);
     pub_emotion = nh.advertise<std_msgs::String>("emotion", 100);
 
     // GET PARAMS
