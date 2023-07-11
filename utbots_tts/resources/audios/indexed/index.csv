@@ -1,4 +1,5 @@
 engine|voice|phrase|language|wav
 mimic|en_US/hifi-tts_low|Hello there.|en_US|0.wav
-mimic|en_US/hifi-tts_low|I am Apollo.|en_US|1.wav
-mimic|en_US/hifi-tts_low|Hello world|en_US|2.wav
+mimic|en_US/hifi-tts_low|Brası́lia|en_US|1.wav
+mimic|en_US/hifi-tts_low|Fortaleza|en_US|2.wav
+mimic|en_US/hifi-tts_low|I like electronic and heavy Metal|en_US|3.wav

@@ -1,0 +1,5 @@
+<launch>
+    <node pkg="nlu_ros" type="commands_extractor.py" name="commands_extractor" output="screen">
+        <param name="csv" value="stored_commands.csv" />
+    </node>
+</launch>

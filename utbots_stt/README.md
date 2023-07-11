@@ -4,8 +4,8 @@
 roscd whisper_cpp_ros
 mkdir models/
 cd models/
-wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin -O ./ggml-base.en.bin # english only
-wget https://huggingface.co/datasets/ggerganov/whisper.cpp/resolve/main/ggml-base.bin -O ./ggml-base.bin # works with multiple languages!
+wget https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin -O ./ggml-base.en.bin # english only
+wget https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin -O ./ggml-base.bin # works with multiple languages!
 
 # Run VAD node
 rosrun vad_silero_ros vad_node
