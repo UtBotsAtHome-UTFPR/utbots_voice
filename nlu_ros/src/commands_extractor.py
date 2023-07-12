@@ -8,7 +8,7 @@ from std_msgs.msg import String
 class CommandsExtractor:
     def __init__(self):
         # Question-answers dict
-        self.comm_list = []
+        self.comm_dict = {}
 
         # Get path
         rp = rospkg.RosPack()
@@ -28,13 +28,14 @@ class CommandsExtractor:
 
         # Publisher
         self.pub = rospy.Publisher("/voice_command", String, queue_size=10)
+        self.pub_speech = rospy.Publisher("stt/robot_speech", String, queue_size=1)
 
         # Process QuestionsAnswers.csv file
         rospy.loginfo(f"[COMM_EXTRACTOR] Reading file: {file_path}")
         with open(file_path, 'r') as csvfile:
             reader = csv.reader(csvfile, delimiter=';')
             for row in reader:
-                self.comm_list = row
+                self.comm_dict[row[0]] = row[1]
         
         # Loop
         rospy.spin()
@@ -43,12 +44,13 @@ class CommandsExtractor:
     def callback(self, msg):
         scores = []
         user_command = str(msg.data)
-        for stored_command in self.comm_list:                                          
-            score = [self.calculate_score(user_command, stored_command), stored_command]                                     
-            scores.append(score)                                                       
+        for keywords, stored_command in self.comm_dict.items():                                          
+            score = self.calculate_score(user_command, keywords)                                  
+            scores.append((score, stored_command))                                           
         scores = sorted(scores, key=lambda x: x[0], reverse=True)
         if scores[0][0] <= 0.1:                                                                           
-            rospy.loginfo("[COMM_EXTRACTOR] Sorry, I don't know that command.")                                   
+            rospy.loginfo("[COMM_EXTRACTOR] Sorry, I don't know that command.") 
+            self.pub_speech.publish("Sorry, please repeat.")
         else:
             command = scores[0][1]
             self.pub.publish(command)
