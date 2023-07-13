@@ -24,11 +24,11 @@ class CommandsExtractor:
         file_path = package_path + "/assets/" + param_csv
 
         # Subscriber
-        rospy.Subscriber("/stt/whispered", String, self.callback)
+        rospy.Subscriber("/utbots/voice/stt/whispered", String, self.callback)
 
         # Publisher
-        self.pub = rospy.Publisher("/voice_command", String, queue_size=10)
-        self.pub_speech = rospy.Publisher("stt/robot_speech", String, queue_size=1)
+        self.pub = rospy.Publisher("/utbots/task_manager/voice_command", String, queue_size=10)
+        self.pub_speech = rospy.Publisher("/utbots/voice/tts/robot_speech", String, queue_size=1)
 
         # Process QuestionsAnswers.csv file
         rospy.loginfo(f"[COMM_EXTRACTOR] Reading file: {file_path}")
