@@ -159,9 +159,10 @@ class SpeechSynthesisNode:
     # Plays wav file (returns True if succeeds)
     def PlayWav(self, wav):
         rospy.loginfo("[TTS] Playing {}".format(wav))
+        self.pub_finishedAudio.publish(String("no"))
         playsound(self.GetWavPath(wav))
         rospy.loginfo("[TTS] Played audio")
-        self.pub_finishedAudio.publish(String("ok"))
+        self.pub_finishedAudio.publish(String("yes"))
 
     # Gets full wav path
     def GetWavPath(self, wav):
