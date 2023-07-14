@@ -1,12 +1,6 @@
 engine|voice|phrase|language|wav
 mimic|en_US/hifi-tts_low|Hello there.|en_US|0.wav
-mimic|en_US/hifi-tts_low|I am Apollo.|en_US|1.wav
-mimic|en_US/hifi-tts_low|Hello there, general Kenobi|en_US|2.wav
-mimic|en_US/hifi-tts_low|I speak with my tiny winy little voice|en_US|3.wav
-mimic|en_US/hifi-tts_low|I will give you instructions for face recognition by using my tiny winy little voice|en_US|4.wav
-mimic|en_US/hifi-tts_low|I will give you instructions for face recognition by using my tiny winy little voice uWu|en_US|5.wav
-mimic|en_US/hifi-tts_low|I will give you instructions for face recognition by using my tiny winy little voice. uWu|en_US|6.wav
-mimic|en_US/hifi-tts_low|I will give you instructions for face recognition by using my tiny winy little voice. uWu... Firstly, type in your name|en_US|7.wav
-mimic|en_US/hifi-tts_low|Unfortunately, it appears someone who goes by this name is already inside the database, would you like to override them? Type in y to confirm or n to choose another name|en_US|8.wav
-mimic|en_US/hifi-tts_low|In this case, do you wish to exit? Press y to exit or n to try again|en_US|9.wav
-mimic|en_US/hifi-tts_low|Their directory was removed, lets begin|en_US|10.wav
+mimic|en_US/hifi-tts_low|Brası́lia|en_US|1.wav
+mimic|en_US/hifi-tts_low|Fortaleza|en_US|2.wav
+mimic|en_US/hifi-tts_low|I like electronic and heavy Metal|en_US|3.wav
+mimic|en_US/hifi-tts_low|Sorry, please repeat.|en_US|4.wav
