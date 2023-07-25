@@ -25,7 +25,7 @@ typedef struct parameters {
     bool print_progress     = false;
     bool no_timestamps      = false;
     std::string language    = "en";
-    std::string model       = ros::package::getPath("whisper_cpp_ros") + "/models/ggml-base.en.bin";
+    std::string model       = ros::package::getPath("whisper_cpp_ros") + "/models/ggml-tiny.en.bin";
 
     // Other parameters
     bool print_timings = false;
