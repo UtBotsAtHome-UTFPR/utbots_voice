@@ -3,6 +3,7 @@
 #include <ros/package.h>
 #include <std_msgs/Int16MultiArray.h>
 #include <std_msgs/String.h>
+#include <std_msgs/Bool.h>
 
 // AUDIO PROCESSING
 #include "miniaudio.h"
@@ -13,6 +14,7 @@
 // ROS PUBLISHER
 ros::Publisher pub_audio;
 ros::Publisher pub_emotion;
+ros::Subscriber sub_tts_activity;
 
 // ADJUSTABLE PARAMETERS
 int ms_to_process_vad   = 300;  // Defines how often will run VAD for buffer_vad
@@ -29,6 +31,7 @@ std::vector<int16_t>    buffer_voice_only;  // Contains audio with voice
 #define STATUS_SPEECH_IS_HAPPENING 1
 int     speech_status       = STATUS_WAITING_FOR_SPEECH;
 double  t_last_speech       = 0;                            // Saves when last speech ended
+bool    tts_activity        = false;
 
 // AUDIO SETTINGS (FIXED)
 const int sample_rate   = 16000;
@@ -56,6 +59,7 @@ ma_device_config    audio_device_config;
 ma_device           audio_device;
 
 // FUNCTION DECLARATIONS
+void        CallbackTTSActivity(const std_msgs::Bool::ConstPtr& msg);
 void        CallbackAudio(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frame_count);
 const void  ResizeAuxBuffer();
 const void  UpdateVoiceBuffer();
@@ -75,6 +79,7 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
     pub_audio = nh.advertise<std_msgs::Int16MultiArray>("voice", 100);
     pub_emotion = nh.advertise<std_msgs::String>("emotion", 100);
+    sub_tts_activity = nh.subscribe("/utbots/voice/tts/is_robot_talking", 1, CallbackTTSActivity);
 
     // GET PARAMS
     nh.getParam("/voice/vad_node/ms_to_process_vad", ms_to_process_vad);
@@ -100,6 +105,17 @@ int main(int argc, char **argv)
     ma_device_uninit(&audio_device);
     ma_encoder_uninit(&audio_encoder);
     return 0;
+}
+
+// Callback for disabling VAD while tts happens
+void CallbackTTSActivity(const std_msgs::Bool::ConstPtr& msg)
+{
+    tts_activity = msg->data;
+
+    if(tts_activity)
+        ROS_INFO("[VAD] VAD disabled while tts is happening");
+    else
+        ROS_INFO("[VAD] VAD enabled, no tts is happening");
 }
 
 void CallbackAudio(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frame_count)
@@ -146,27 +162,29 @@ const void UpdateVoiceBuffer()
 
 const void UpdateVoiceActivityStatus()
 {
-    bool voice_activity = EvaluateSpeechPresence();
-    
-    if (voice_activity) {
-        ROS_INFO("[VAD] Voice activity");
-        speech_status = STATUS_SPEECH_IS_HAPPENING;
-        t_last_speech = ros::Time::now().toSec();
-    }
-    else {
-        if (speech_status == STATUS_SPEECH_IS_HAPPENING) {
-            float dt_ms = 1000 * (ros::Time::now().toSec() - t_last_speech);
-            ROS_INFO("[VAD] Interval (%f ms)...", dt_ms);
-            if (dt_ms  > ms_word_interval) {
-                ROS_INFO("[VAD] Sentence end");
-                speech_status = STATUS_WAITING_FOR_SPEECH;
-                if (RunFailsafeVAD()) {
-                    JoinFrames(&buffer_voice_only, &buffer_vad_aux);
-                    WriteFramesToFile(&buffer_vad_aux);
-                    PublishBuffer(&buffer_vad_aux);
-                    ClearFrames(&buffer_vad_aux);
+    if(!tts_activity){
+        bool voice_activity = EvaluateSpeechPresence();
+        
+        if (voice_activity) {
+            ROS_INFO("[VAD] Voice activity");
+            speech_status = STATUS_SPEECH_IS_HAPPENING;
+            t_last_speech = ros::Time::now().toSec();
+        }
+        else {
+            if (speech_status == STATUS_SPEECH_IS_HAPPENING) {
+                float dt_ms = 1000 * (ros::Time::now().toSec() - t_last_speech);
+                ROS_INFO("[VAD] Interval (%f ms)...", dt_ms);
+                if (dt_ms  > ms_word_interval) {
+                    ROS_INFO("[VAD] Sentence end");
+                    speech_status = STATUS_WAITING_FOR_SPEECH;
+                    if (RunFailsafeVAD()) {
+                        JoinFrames(&buffer_voice_only, &buffer_vad_aux);
+                        WriteFramesToFile(&buffer_vad_aux);
+                        PublishBuffer(&buffer_vad_aux);
+                        ClearFrames(&buffer_vad_aux);
+                    }
+                    ClearFrames(&buffer_voice_only);
                 }
-                ClearFrames(&buffer_voice_only);
             }
         }
     }

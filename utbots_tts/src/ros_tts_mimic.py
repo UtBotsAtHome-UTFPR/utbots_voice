@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import rospy
-from std_msgs.msg import String
+from std_msgs.msg import String, Bool
 import rospkg
 
 from os import system, path
@@ -39,7 +39,7 @@ class SpeechSynthesisNode:
 
         # Publishers
         self.pub_finishedAudio = rospy.Publisher(
-            'is_robot_done_talking', String, queue_size=1)
+            'is_robot_talking', Bool, queue_size=1)
 
         # Says hello
         self.TextToSpeech("Hello there.")
@@ -159,10 +159,10 @@ class SpeechSynthesisNode:
     # Plays wav file (returns True if succeeds)
     def PlayWav(self, wav):
         rospy.loginfo("[TTS] Playing {}".format(wav))
-        self.pub_finishedAudio.publish(String("no"))
+        self.pub_finishedAudio.publish(Bool(True))
         playsound(self.GetWavPath(wav))
         rospy.loginfo("[TTS] Played audio")
-        self.pub_finishedAudio.publish(String("yes"))
+        self.pub_finishedAudio.publish(Bool(False))
 
     # Gets full wav path
     def GetWavPath(self, wav):
