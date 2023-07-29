@@ -46,6 +46,7 @@ class NLUnderstanding:
                     reader = csv.reader(csvfile, delimiter=';')
                     for row in reader:
                         self.kword_dict[row[0]] = [row[1], dbase]
+                        rospy.loginfo(f"[NLU] {row[0], row[1], dbase}") 
 
         # Subscriber
         rospy.Subscriber("/utbots/voice/stt/whispered", String, self.callback)
