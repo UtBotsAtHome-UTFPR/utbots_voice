@@ -162,29 +162,27 @@ const void UpdateVoiceBuffer()
 
 const void UpdateVoiceActivityStatus()
 {
-    if(!tts_activity){
-        bool voice_activity = EvaluateSpeechPresence();
-        
-        if (voice_activity) {
-            ROS_INFO("[VAD] Voice activity");
-            speech_status = STATUS_SPEECH_IS_HAPPENING;
-            t_last_speech = ros::Time::now().toSec();
-        }
-        else {
-            if (speech_status == STATUS_SPEECH_IS_HAPPENING) {
-                float dt_ms = 1000 * (ros::Time::now().toSec() - t_last_speech);
-                ROS_INFO("[VAD] Interval (%f ms)...", dt_ms);
-                if (dt_ms  > ms_word_interval) {
-                    ROS_INFO("[VAD] Sentence end");
-                    speech_status = STATUS_WAITING_FOR_SPEECH;
-                    if (RunFailsafeVAD()) {
-                        JoinFrames(&buffer_voice_only, &buffer_vad_aux);
-                        WriteFramesToFile(&buffer_vad_aux);
-                        PublishBuffer(&buffer_vad_aux);
-                        ClearFrames(&buffer_vad_aux);
-                    }
-                    ClearFrames(&buffer_voice_only);
+    bool voice_activity = EvaluateSpeechPresence();
+    
+    if (voice_activity) {
+        ROS_INFO("[VAD] Voice activity");
+        speech_status = STATUS_SPEECH_IS_HAPPENING;
+        t_last_speech = ros::Time::now().toSec();
+    }
+    else {
+        if (speech_status == STATUS_SPEECH_IS_HAPPENING) {
+            float dt_ms = 1000 * (ros::Time::now().toSec() - t_last_speech);
+            ROS_INFO("[VAD] Interval (%f ms)...", dt_ms);
+            if (dt_ms  > ms_word_interval) {
+                ROS_INFO("[VAD] Sentence end");
+                speech_status = STATUS_WAITING_FOR_SPEECH;
+                if (RunFailsafeVAD()) {
+                    JoinFrames(&buffer_voice_only, &buffer_vad_aux);
+                    WriteFramesToFile(&buffer_vad_aux);
+                    PublishBuffer(&buffer_vad_aux);
+                    ClearFrames(&buffer_vad_aux);
                 }
+                ClearFrames(&buffer_voice_only);
             }
         }
     }
@@ -192,20 +190,24 @@ const void UpdateVoiceActivityStatus()
 
 const bool EvaluateSpeechPresence()
 {     
-    const int num_samples = buffer_vad.size();
+    if(!tts_activity){
+        const int num_samples = buffer_vad.size();
 
-    // Converts audio to float32 PCM
-    std::vector<float> pcm_f32(num_samples);
-    for (int i = 0; i < num_samples; i++)
-        pcm_f32[i] = static_cast<float>(buffer_vad[i]) / 32768.0;
+        // Converts audio to float32 PCM
+        std::vector<float> pcm_f32(num_samples);
+        for (int i = 0; i < num_samples; i++)
+            pcm_f32[i] = static_cast<float>(buffer_vad[i]) / 32768.0;
 
-    // Runs model
-    vad_small.reset_states();
-    vad_small.predict(pcm_f32);
+        // Runs model
+        vad_small.reset_states();
+        vad_small.predict(pcm_f32);
 
-    // Returns model output
-    if (vad_small.get_output() >= vad_threshold)
-        return true;
+        // Returns model output
+        if (vad_small.get_output() >= vad_threshold)
+            return true;
+        else
+            return false;
+    }
     else
         return false;
 }

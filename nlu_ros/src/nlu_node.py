@@ -4,6 +4,7 @@ import rospkg
 import re
 import rospy
 from std_msgs.msg import String
+from voice_msgs.msg import NLU
 
 class NLUnderstanding:
     def __init__(self):
@@ -51,7 +52,7 @@ class NLUnderstanding:
 
         # Publisher
         self.pub_nlu = rospy.Publisher("/utbots/voice/nlu", String, queue_size=10)
-        self.pub_database = rospy.Publisher("/utbots/voice/nlu_dbase", String, queue_size=10)
+        self.pub_nlumsg = rospy.Publisher("/utbots/voice/nlu_msg", NLU, queue_size=10)
         self.pub_speech = rospy.Publisher("/utbots/voice/tts/robot_speech", String, queue_size=1)
         
         # Loop
@@ -71,8 +72,8 @@ class NLUnderstanding:
         else:
             command = scores[0][1]
             self.pub_nlu.publish(command)
-            self.pub_database.publish(stored_command[1])
-            rospy.loginfo(f"[NLU] Understood: {command}") 
+            self.pub_nlumsg.publish(NLU(String(command), String(self.kword_dict[command][1])))
+            rospy.loginfo(f"[NLU] Understood {command} from {self.kword_dict[command][1]}") 
 
     # Calculates score of input command against stored command
     def calculate_score(self, input_command, stored_command):                                               

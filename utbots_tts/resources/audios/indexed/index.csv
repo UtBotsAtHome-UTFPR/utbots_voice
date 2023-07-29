@@ -1,11 +1,18 @@
 engine|voice|phrase|language|wav
 mimic|en_US/hifi-tts_low|Hello there.|en_US|0.wav
-mimic|en_US/hifi-tts_low|Brası́lia|en_US|1.wav
-mimic|en_US/hifi-tts_low|Fortaleza|en_US|2.wav
-mimic|en_US/hifi-tts_low|I like electronic and heavy Metal|en_US|3.wav
-mimic|en_US/hifi-tts_low|Sorry, please repeat.|en_US|4.wav
-mimic|en_US/hifi-tts_low|Hi, my name is Apollo...What is your name?|en_US|5.wav
-mimic|en_US/hifi-tts_low|Please repeat, bruh.|en_US|6.wav
-mimic|en_US/hifi-tts_low|Ok. Put the bag in my hand, i will close it in 5 seconds|en_US|7.wav
-mimic|en_US/hifi-tts_low|Be ready, I will start following you in 5 seconds. When we reach the car, call my name, wait and say stop now|en_US|8.wav
-mimic|en_US/hifi-tts_low|Following you|en_US|9.wav
+mimic|en_US/hifi-tts_low|I am Apollo.|en_US|1.wav
+mimic|en_US/hifi-tts_low|Sorry, please repeat.|en_US|2.wav
+mimic|en_US/hifi-tts_low|I will give you instructions for face recognition ... Firstly, say your name|en_US|3.wav
+mimic|en_US/hifi-tts_low|Hi, my name is Apollo...What is your name?|en_US|4.wav
+mimic|en_US/hifi-tts_low|Please repeat.|en_US|5.wav
+mimic|en_US/hifi-tts_low|Loading faces for training|en_US|6.wav
+mimic|en_US/hifi-tts_low|Ok. Lets begin|en_US|7.wav
+mimic|en_US/hifi-tts_low|Tilt your head directly into the camera|en_US|8.wav
+mimic|en_US/hifi-tts_low|Your file is ready for training|en_US|9.wav
+mimic|en_US/hifi-tts_low|Tilt your head upwards|en_US|10.wav
+mimic|en_US/hifi-tts_low|Now upwards|en_US|11.wav
+mimic|en_US/hifi-tts_low|Downwards|en_US|12.wav
+mimic|en_US/hifi-tts_low|To the left|en_US|13.wav
+mimic|en_US/hifi-tts_low|To the right|en_US|14.wav
+mimic|en_US/hifi-tts_low|Youre done, congratulations and thank you very much|en_US|15.wav
+mimic|en_US/hifi-tts_low|Keep looking that way, we couldnt find you|en_US|16.wav

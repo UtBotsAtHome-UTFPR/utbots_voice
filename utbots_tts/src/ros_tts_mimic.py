@@ -6,6 +6,7 @@ import rospkg
 from os import system, path
 import shutil
 import pandas
+import time
 from playsound import playsound
 
 
@@ -33,17 +34,21 @@ class SpeechSynthesisNode:
         self.DeleteRowsWithoutWavs()
         self.ReorderWavNames()
 
+        # Publishers
+        self.pub_ttsActivity = rospy.Publisher(
+            'is_robot_talking', Bool, queue_size=1)
+        
+        self.pub_ttsActivity.publish(Bool(True))
+        
         # Subscribers
         self.sub_text = rospy.Subscriber(
             "robot_speech", String, self.Callback)
 
-        # Publishers
-        self.pub_finishedAudio = rospy.Publisher(
-            'is_robot_talking', Bool, queue_size=1)
-
         # Says hello
         self.TextToSpeech("Hello there.")
         self.TextToSpeech("I am Apollo.")
+        time.sleep(33)
+        self.pub_ttsActivity.publish(Bool(False))
 
         # Loop
         self.loopRate = rospy.Rate(30)
@@ -52,7 +57,9 @@ class SpeechSynthesisNode:
     # Callback for received text
     def Callback(self, msg):
         rospy.loginfo("[TTS] Callback: text is '{}'".format(msg.data))
+        self.pub_ttsActivity.publish(Bool(True))
         self.TextToSpeech(msg.data)
+        self.pub_ttsActivity.publish(Bool(False))
 
     # Deletes rows that do not have corresponding wav files
     def DeleteRowsWithoutWavs(self):
@@ -159,10 +166,8 @@ class SpeechSynthesisNode:
     # Plays wav file (returns True if succeeds)
     def PlayWav(self, wav):
         rospy.loginfo("[TTS] Playing {}".format(wav))
-        self.pub_finishedAudio.publish(Bool(True))
         playsound(self.GetWavPath(wav))
         rospy.loginfo("[TTS] Played audio")
-        self.pub_finishedAudio.publish(Bool(False))
 
     # Gets full wav path
     def GetWavPath(self, wav):
