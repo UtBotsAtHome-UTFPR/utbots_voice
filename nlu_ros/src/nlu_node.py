@@ -3,6 +3,7 @@ import csv
 import rospkg
 import re
 import rospy
+import time
 from std_msgs.msg import String
 from voice_msgs.msg import NLU
 
@@ -13,40 +14,13 @@ class NLUnderstanding:
 
         # Get path
         rp = rospkg.RosPack()
-        package_path = rp.get_path('nlu_ros')
+        self.package_path = rp.get_path('nlu_ros')
 
         # ROS init
         rospy.init_node("nlu_node", anonymous=True)
 
-        # Get parameter
-
-        keyword_databases = ["commands", "qa", "people", "drinks"]
-
-        # /utbots/voice/nlu/param
-        get_commands = rospy.get_param("/commands", True)
-        get_qa = rospy.get_param("/qa", False)
-        get_people = rospy.get_param("/people", False)
-        get_drinks = rospy.get_param("/drinks", False)
-        
-        database_selection = {
-        "commands": get_commands,
-        "qa": get_qa,
-        "people": get_people,
-        "drinks": get_drinks
-        }
-
-        rospy.loginfo("[NLU] selected_databases:")
-        for dbase in keyword_databases:
-            file_path = package_path + "/assets/"
-            if database_selection[dbase] == True:
-                rospy.loginfo(dbase)
-                file_path += dbase + ".csv"
-                rospy.loginfo(f"Reading file: {file_path}")
-                with open(file_path, 'r') as csvfile:
-                    reader = csv.reader(csvfile, delimiter=';')
-                    for row in reader:
-                        self.kword_dict[row[0]] = [row[1], dbase]
-                        rospy.loginfo(f"[NLU] {row[0], row[1], dbase}") 
+        # Flags
+        self.firstMessage = True
 
         # Subscriber
         rospy.Subscriber("/utbots/voice/stt/whispered", String, self.callback)
@@ -56,11 +30,44 @@ class NLUnderstanding:
         self.pub_nlumsg = rospy.Publisher("/utbots/voice/nlu_msg", NLU, queue_size=10)
         self.pub_speech = rospy.Publisher("/utbots/voice/tts/robot_speech", String, queue_size=1)
         
+        # Get parameter
+
+        self.keyword_databases = ["commands", "qa", "people", "drinks"]
+
         # Loop
         rospy.spin()
 
     # Receives command and returns answer
     def callback(self, msg):
+
+        if self.firstMessage:
+            self.firstMessage = False
+            # /utbots/voice/nlu/param
+            get_commands = rospy.get_param("/commands", True)
+            get_qa = rospy.get_param("/qa", False)
+            get_people = rospy.get_param("/people", False)
+            get_drinks = rospy.get_param("/drinks", False)
+            
+            database_selection = {
+            "commands": get_commands,
+            "qa": get_qa,
+            "people": get_people,
+            "drinks": get_drinks
+            }
+
+            rospy.loginfo("[NLU] selected_databases:")
+            for dbase in self.keyword_databases:
+                file_path = self.package_path + "/assets/"
+                if database_selection[dbase] == True:
+                    rospy.loginfo(dbase)
+                    file_path += dbase + ".csv"
+                    rospy.loginfo(f"Reading file: {file_path}")
+                    with open(file_path, 'r') as csvfile:
+                        reader = csv.reader(csvfile, delimiter=';')
+                        for row in reader:
+                            self.kword_dict[row[0]] = [row[1], dbase]
+                            rospy.loginfo(f"[NLU] {row[0], row[1], dbase}") 
+        
         scores = []
         user_command = str(msg.data)
         for keywords, stored_command in self.kword_dict.items():                                          
