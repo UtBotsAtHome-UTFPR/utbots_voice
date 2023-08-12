@@ -43,10 +43,11 @@ class NLUnderstanding:
         if self.firstMessage:
             self.firstMessage = False
             # /utbots/voice/nlu/param
-            get_commands = rospy.get_param("/commands", True)
-            get_qa = rospy.get_param("/qa", False)
-            get_people = rospy.get_param("/people", False)
-            get_drinks = rospy.get_param("/drinks", False)
+            get_commands = rospy.get_param("/nlu_node/commands", True)
+            get_qa = rospy.get_param("/nlu_node/qa", False)
+            get_people = rospy.get_param("/nlu_node/people", False)
+            print(get_people)
+            get_drinks = rospy.get_param("/nlu_node/drinks", False)
             
             database_selection = {
             "commands": get_commands,

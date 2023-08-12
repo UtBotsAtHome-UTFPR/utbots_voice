@@ -38,17 +38,9 @@ class SpeechSynthesisNode:
         self.pub_ttsActivity = rospy.Publisher(
             'is_robot_talking', Bool, queue_size=1)
         
-        self.pub_ttsActivity.publish(Bool(True))
-        
         # Subscribers
         self.sub_text = rospy.Subscriber(
             "robot_speech", String, self.Callback)
-
-        # Says hello
-        self.TextToSpeech("Hello there.")
-        self.TextToSpeech("I am Apollo.")
-        time.sleep(33)
-        self.pub_ttsActivity.publish(Bool(False))
 
         # Loop
         self.loopRate = rospy.Rate(30)
@@ -176,6 +168,13 @@ class SpeechSynthesisNode:
     # Main loop
     def MainLoop(self):
         rospy.loginfo("[TTS] Looping")
+
+        # Says hello
+        # self.pub_ttsActivity.publish(Bool(True))
+        # self.TextToSpeech("Hello there.")
+        # self.TextToSpeech("I am Apollo.")
+        # self.pub_ttsActivity.publish(Bool(False))
+
         while rospy.is_shutdown() == False:
             self.loopRate.sleep()
 
