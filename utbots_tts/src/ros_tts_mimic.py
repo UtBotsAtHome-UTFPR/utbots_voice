@@ -21,6 +21,7 @@ class SpeechSynthesisNode:
         self.param_voice = rospy.get_param(
             '~voice', default="en_US/hifi-tts_low")
         rospy.loginfo("[TTS] Voice: {}".format(self.param_voice))
+        self.param_istalking = rospy.set_param("/is_robot_talking", False)
 
         # Gets path of this package
         self.packagePath = rospkg.RosPack().get_path('utbots_tts')
@@ -50,8 +51,10 @@ class SpeechSynthesisNode:
     def Callback(self, msg):
         rospy.loginfo("[TTS] Callback: text is '{}'".format(msg.data))
         self.pub_ttsActivity.publish(Bool(True))
+        self.param_istalking = rospy.set_param("/is_robot_talking", True)
         self.TextToSpeech(msg.data)
         self.pub_ttsActivity.publish(Bool(False))
+        self.param_istalking = rospy.set_param("/is_robot_talking", False)
 
     # Deletes rows that do not have corresponding wav files
     def DeleteRowsWithoutWavs(self):
