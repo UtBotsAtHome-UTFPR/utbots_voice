@@ -16,8 +16,9 @@ ros::Publisher pub_audio;
 ros::Publisher pub_emotion;
 ros::Subscriber sub_tts_activity;
 
-// TTS ACTIVITY PARAMETER
+// VAD DISABLING PARAMETERS
 bool param_tts_activity = false;
+bool param_disable_vad = false;
 
 // ADJUSTABLE PARAMETERS
 int ms_to_process_vad   = 300;  // Defines how often will run VAD for buffer_vad
@@ -194,7 +195,8 @@ const void UpdateVoiceActivityStatus()
 const bool EvaluateSpeechPresence()
 {   
     ros::param::get("/is_robot_talking", param_tts_activity);
-    if(!tts_activity && !param_tts_activity){
+    ros::param::get("/disable_vad", param_disable_vad);
+    if(!tts_activity && !param_tts_activity && !param_disable_vad){
         const int num_samples = buffer_vad.size();
 
         // Converts audio to float32 PCM
