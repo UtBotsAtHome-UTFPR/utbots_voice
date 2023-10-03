@@ -43,11 +43,11 @@ class NLUnderstanding:
         if self.firstMessage:
             self.firstMessage = False
             # /utbots/voice/nlu/param
-            get_commands = rospy.get_param("/nlu_node/commands", True)
-            get_qa = rospy.get_param("/nlu_node/qa", False)
-            get_people = rospy.get_param("/nlu_node/people", False)
+            get_commands = rospy.get_param("/voice/nlu_node/commands", True)
+            get_qa = rospy.get_param("/voice/nlu_node/qa", False)
+            get_people = rospy.get_param("/voice/nlu_node/people", False)
             print(get_people)
-            get_drinks = rospy.get_param("/nlu_node/drinks", False)
+            get_drinks = rospy.get_param("/voice/nlu_node/drinks", False)
             
             database_selection = {
             "commands": get_commands,
@@ -73,16 +73,18 @@ class NLUnderstanding:
         user_command = str(msg.data)
         for keywords, stored_command in self.kword_dict.items():                                          
             score = self.calculate_score(user_command, keywords)                                  
-            scores.append((score, stored_command[0]))                                           
+            scores.append((score, stored_command[0], stored_command[1]))                                        
         scores = sorted(scores, key=lambda x: x[0], reverse=True)
         if scores[0][0] <= 0.1:                                                                           
             rospy.loginfo("[NLU] Sorry, I did not understand you.") 
             self.pub_speech.publish("Sorry, please repeat.")
         else:
             command = scores[0][1]
+            dbase = scores[0][2]
+            self.pub_speech.publish(command)
             self.pub_nlu.publish(command)
-            self.pub_nlumsg.publish(NLU(String(command), String(self.kword_dict[command][1])))
-            rospy.loginfo(f"[NLU] Understood {command} from {self.kword_dict[command][1]}") 
+            self.pub_nlumsg.publish(NLU(String(command), String(dbase)))
+            rospy.loginfo(f"[NLU] Understood {command} from {dbase}") 
 
     # Calculates score of input command against stored command
     def calculate_score(self, input_command, stored_command):                                               

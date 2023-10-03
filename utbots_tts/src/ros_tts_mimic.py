@@ -52,7 +52,7 @@ class SpeechSynthesisNode:
         rospy.loginfo("[TTS] Callback: text is '{}'".format(msg.data))
         self.pub_ttsActivity.publish(Bool(True))
         self.param_istalking = rospy.set_param("/is_robot_talking", True)
-        self.TextToSpeech(msg.data)
+        self.TextToSpeech("a " + msg.data)
         self.pub_ttsActivity.publish(Bool(False))
         self.param_istalking = rospy.set_param("/is_robot_talking", False)
 
