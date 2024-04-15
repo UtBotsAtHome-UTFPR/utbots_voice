@@ -1,6 +1,25 @@
-## ROS packages for handling human-robot interface
-- [Demonstration](https://www.youtube.com/watch?v=4TaugaMfJ-8)
----
+- **This stack contains packages related to human-robot interface, such as:**
+    - [utbots_stt](https://github.com/UtBotsAtHome-UTFPR/utbots_voice/blob/master/utbots_stt)
+    - [utbot_tts](https://github.com/UtBotsAtHome-UTFPR/utbots_voice/tree/master/utbots_tts)
+    - nlu_ros
+
+[Demonstration](https://www.youtube.com/watch?v=4TaugaMfJ-8)
+
+- ### Getting started
+    - ### Installation
+        ```bash 
+        cd catkin_ws/src
+        git clone --recurse-submodules https://github.com/UtBotsAtHome-UTFPR/utbots_voice.git
+        cd ../
+        ```
+
+    - #### Building
+        ```bash
+        catkin_make -DCMAKE_BUILD_TYPE=Release
+        ```
+    - #### Running
+        See the usage explanation accessing each package in the repository
+
 ## Relevant information
 - **For TTS, we offer two different solutions:**
     - **ROS wrapper for [Coqui TTS](https://github.com/coqui-ai/TTS)**
@@ -21,20 +40,4 @@
         - whisper.cpp is a lightweight implementation of OpenAI's Whisper
         - Performs speech recogition
         - [Demonstration](https://www.youtube.com/watch?v=3EmWbu2jJg0)
----
-## Setup
-- **Clone repository and compile workspace**
-    ```bash
-    # Clone repository
-    cd ~/catkin_ws/src
-    git clone --recurse-submodules https://github.com/UtBotsAtHome-UTFPR/utbots_voice.git
-
-    # Compile workspace
-    cd ~/catkin_ws
-    catkin_make
-    source devel/setup.bash
-    ```
-- **Setup packages**
-    - Read steps in [utbots_stt](https://github.com/UtBotsAtHome-UTFPR/utbots_voice/blob/master/utbots_stt)
-    - Read steps in [utbot_tts](https://github.com/UtBotsAtHome-UTFPR/utbots_voice/tree/master/utbots_tts)
 ---
