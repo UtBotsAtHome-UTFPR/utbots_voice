@@ -1,7 +1,8 @@
 # utbots_voice
 
 **This stack contains packages related to human-robot interface, such as:**
-  
+
+- [display_emotions](https://github.com/UtBotsAtHome-UTFPR/display_emotions/tree/574f91eab071ab4ef88e66dae85b1703996774e3)
 - [utbots_stt](https://github.com/UtBotsAtHome-UTFPR/utbots_voice/blob/master/utbots_stt)
 - [utbot_tts](https://github.com/UtBotsAtHome-UTFPR/utbots_voice/tree/master/utbots_tts)
 - nlu_ros
