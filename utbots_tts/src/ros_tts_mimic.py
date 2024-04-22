@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 import rospy
-from std_msgs.msg import String
+from std_msgs.msg import String, Bool
 import rospkg
 
 from os import system, path
 import shutil
 import pandas
+import time
 from playsound import playsound
 
 
@@ -20,6 +21,7 @@ class SpeechSynthesisNode:
         self.param_voice = rospy.get_param(
             '~voice', default="en_US/hifi-tts_low")
         rospy.loginfo("[TTS] Voice: {}".format(self.param_voice))
+        self.param_istalking = rospy.set_param("/is_robot_talking", False)
 
         # Gets path of this package
         self.packagePath = rospkg.RosPack().get_path('utbots_tts')
@@ -33,17 +35,13 @@ class SpeechSynthesisNode:
         self.DeleteRowsWithoutWavs()
         self.ReorderWavNames()
 
+        # Publishers
+        self.pub_ttsActivity = rospy.Publisher(
+            'is_robot_talking', Bool, queue_size=1)
+        
         # Subscribers
         self.sub_text = rospy.Subscriber(
             "robot_speech", String, self.Callback)
-
-        # Publishers
-        self.pub_finishedAudio = rospy.Publisher(
-            'is_robot_done_talking', String, queue_size=1)
-
-        # Says hello
-        self.TextToSpeech("Hello there.")
-        self.TextToSpeech("I am Apollo.")
 
         # Loop
         self.loopRate = rospy.Rate(30)
@@ -52,7 +50,11 @@ class SpeechSynthesisNode:
     # Callback for received text
     def Callback(self, msg):
         rospy.loginfo("[TTS] Callback: text is '{}'".format(msg.data))
-        self.TextToSpeech(msg.data)
+        self.pub_ttsActivity.publish(Bool(True))
+        self.param_istalking = rospy.set_param("/is_robot_talking", True)
+        self.TextToSpeech("a " + msg.data)
+        self.pub_ttsActivity.publish(Bool(False))
+        self.param_istalking = rospy.set_param("/is_robot_talking", False)
 
     # Deletes rows that do not have corresponding wav files
     def DeleteRowsWithoutWavs(self):
@@ -159,10 +161,8 @@ class SpeechSynthesisNode:
     # Plays wav file (returns True if succeeds)
     def PlayWav(self, wav):
         rospy.loginfo("[TTS] Playing {}".format(wav))
-        self.pub_finishedAudio.publish(String("no"))
         playsound(self.GetWavPath(wav))
         rospy.loginfo("[TTS] Played audio")
-        self.pub_finishedAudio.publish(String("yes"))
 
     # Gets full wav path
     def GetWavPath(self, wav):
@@ -171,6 +171,13 @@ class SpeechSynthesisNode:
     # Main loop
     def MainLoop(self):
         rospy.loginfo("[TTS] Looping")
+
+        # Says hello
+        # self.pub_ttsActivity.publish(Bool(True))
+        # self.TextToSpeech("Hello there.")
+        # self.TextToSpeech("I am Apollo.")
+        # self.pub_ttsActivity.publish(Bool(False))
+
         while rospy.is_shutdown() == False:
             self.loopRate.sleep()
 

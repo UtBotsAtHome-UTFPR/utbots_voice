@@ -3,6 +3,7 @@
 #include <ros/package.h>
 #include <std_msgs/Int16MultiArray.h>
 #include <std_msgs/String.h>
+#include <std_msgs/Bool.h>
 
 // AUDIO PROCESSING
 #include "miniaudio.h"
@@ -10,9 +11,14 @@
 // VAD
 #include "vad_iterator.hpp"
 
-// ROS PUBLISHER
+// ROS PUBLISHER AND SUBSCRIBER
 ros::Publisher pub_audio;
 ros::Publisher pub_emotion;
+ros::Subscriber sub_tts_activity;
+
+// VAD DISABLING PARAMETERS
+bool param_tts_activity = false;
+bool param_disable_vad = false;
 
 // ADJUSTABLE PARAMETERS
 int ms_to_process_vad   = 300;  // Defines how often will run VAD for buffer_vad
@@ -29,6 +35,7 @@ std::vector<int16_t>    buffer_voice_only;  // Contains audio with voice
 #define STATUS_SPEECH_IS_HAPPENING 1
 int     speech_status       = STATUS_WAITING_FOR_SPEECH;
 double  t_last_speech       = 0;                            // Saves when last speech ended
+bool    tts_activity        = false;
 
 // AUDIO SETTINGS (FIXED)
 const int sample_rate   = 16000;
@@ -56,6 +63,7 @@ ma_device_config    audio_device_config;
 ma_device           audio_device;
 
 // FUNCTION DECLARATIONS
+void        CallbackTTSActivity(const std_msgs::Bool::ConstPtr& msg);
 void        CallbackAudio(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frame_count);
 const void  ResizeAuxBuffer();
 const void  UpdateVoiceBuffer();
@@ -75,6 +83,7 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
     pub_audio = nh.advertise<std_msgs::Int16MultiArray>("voice", 100);
     pub_emotion = nh.advertise<std_msgs::String>("emotion", 100);
+    sub_tts_activity = nh.subscribe("/utbots/voice/tts/is_robot_talking", 1, CallbackTTSActivity);
 
     // GET PARAMS
     nh.getParam("/voice/vad_node/ms_to_process_vad", ms_to_process_vad);
@@ -100,6 +109,17 @@ int main(int argc, char **argv)
     ma_device_uninit(&audio_device);
     ma_encoder_uninit(&audio_encoder);
     return 0;
+}
+
+// Callback for disabling VAD while tts happens
+void CallbackTTSActivity(const std_msgs::Bool::ConstPtr& msg)
+{
+    tts_activity = msg->data;
+
+    if(tts_activity)
+        ROS_INFO("[VAD] VAD disabled while tts is happening");
+    else
+        ROS_INFO("[VAD] VAD enabled, no tts is happening");
 }
 
 void CallbackAudio(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frame_count)
@@ -173,21 +193,27 @@ const void UpdateVoiceActivityStatus()
 }
 
 const bool EvaluateSpeechPresence()
-{     
-    const int num_samples = buffer_vad.size();
+{   
+    ros::param::get("/is_robot_talking", param_tts_activity);
+    ros::param::get("/disable_vad", param_disable_vad);
+    if(!tts_activity && !param_tts_activity && !param_disable_vad){
+        const int num_samples = buffer_vad.size();
 
-    // Converts audio to float32 PCM
-    std::vector<float> pcm_f32(num_samples);
-    for (int i = 0; i < num_samples; i++)
-        pcm_f32[i] = static_cast<float>(buffer_vad[i]) / 32768.0;
+        // Converts audio to float32 PCM
+        std::vector<float> pcm_f32(num_samples);
+        for (int i = 0; i < num_samples; i++)
+            pcm_f32[i] = static_cast<float>(buffer_vad[i]) / 32768.0;
 
-    // Runs model
-    vad_small.reset_states();
-    vad_small.predict(pcm_f32);
+        // Runs model
+        vad_small.reset_states();
+        vad_small.predict(pcm_f32);
 
-    // Returns model output
-    if (vad_small.get_output() >= vad_threshold)
-        return true;
+        // Returns model output
+        if (vad_small.get_output() >= vad_threshold)
+            return true;
+        else
+            return false;
+    }
     else
         return false;
 }

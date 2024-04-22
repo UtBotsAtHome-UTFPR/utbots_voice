@@ -4,6 +4,7 @@
 roscd whisper_cpp_ros
 mkdir models/
 cd models/
+wget https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-tiny.en.bin -O ./ggml-tiny.en.bin # tiny model english only
 wget https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.en.bin -O ./ggml-base.en.bin # english only
 wget https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-base.bin -O ./ggml-base.bin # works with multiple languages!
 
