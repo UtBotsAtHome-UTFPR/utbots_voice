@@ -1,4 +1,4 @@
-// ROS
+// ROSpub_emotion
 #include <ros/ros.h>
 #include <ros/package.h>
 #include <std_msgs/Int16MultiArray.h>
@@ -81,14 +81,14 @@ int main(int argc, char **argv)
     // ROS
     ros::init(argc, argv, "vad_node");
     ros::NodeHandle nh;
-    pub_audio = nh.advertise<std_msgs::Int16MultiArray>("voice", 100);
-    pub_emotion = nh.advertise<std_msgs::String>("emotion", 100);
+    pub_audio = nh.advertise<std_msgs::Int16MultiArray>("/utbots/voice/stt/voice_signal", 100);
+    pub_emotion = nh.advertise<std_msgs::String>("/utbots/voice/tts/emotion", 100);
     sub_tts_activity = nh.subscribe("/utbots/voice/tts/is_robot_talking", 1, CallbackTTSActivity);
 
     // GET PARAMS
-    nh.getParam("/voice/vad_node/ms_to_process_vad", ms_to_process_vad);
-    nh.getParam("/voice/vad_node/ms_word_interval", ms_word_interval);
-    nh.getParam("/voice/vad_node/ms_buffer_vad_aux", ms_buffer_vad_aux);
+    nh.getParam("vad_node/ms_to_process_vad", ms_to_process_vad);
+    nh.getParam("vad_node/ms_word_interval", ms_word_interval);
+    nh.getParam("vad_node/ms_buffer_vad_aux", ms_buffer_vad_aux);
     ROS_INFO("[VAD] ms_to_process_vad = %d", ms_to_process_vad);
     ROS_INFO("[VAD] ms_word_interval = %d", ms_word_interval);
     ROS_INFO("[VAD] ms_buffer_vad_aux = %d\n", ms_buffer_vad_aux);
