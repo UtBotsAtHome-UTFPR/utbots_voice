@@ -42,9 +42,8 @@ class WhisperNode
 
     // ROS
     ros::NodeHandle nh;
-    ros::Subscriber sub_audio_data = nh.subscribe("voice", 10, &WhisperNode::CallbackAudioData, this);
-    ros::Publisher  pub_output_text = nh.advertise<std_msgs::String>("whispered", 1);
-
+    ros::Subscriber sub_audio_data = nh.subscribe("/utbots/voice/stt/voice_signal", 10, &WhisperNode::CallbackAudioData, this);
+    ros::Publisher  pub_output_text = nh.advertise<std_msgs::String>("/utbots/voice/stt/whispered", 1);
 
     public:
         // Constructor
@@ -63,20 +62,20 @@ class WhisperNode
         void InitParams()
         {
             ROS_INFO("[WHISPER] Initializing parameters");
-            nh.getParam("/voice/whisper_node/offset_t_ms",     params.offset_t_ms);
-            nh.getParam("/voice/whisper_node/duration_ms",     params.duration_ms);
-            nh.getParam("/voice/whisper_node/max_context",     params.max_context);
-            nh.getParam("/voice/whisper_node/max_len",         params.max_len);
-            nh.getParam("/voice/whisper_node/word_thold",      params.word_thold);
-            nh.getParam("/voice/whisper_node/speed_up",        params.speed_up);
-            nh.getParam("/voice/whisper_node/translate",       params.translate);
-            nh.getParam("/voice/whisper_node/print_special",   params.print_special);
-            nh.getParam("/voice/whisper_node/print_progress",  params.print_progress);
-            nh.getParam("/voice/whisper_node/no_timestamps",   params.no_timestamps);
-            nh.getParam("/voice/whisper_node/language",        params.language);
-            nh.getParam("/voice/whisper_node/model",           params.model);
-            nh.getParam("/voice/whisper_node/print_timings",   params.print_timings);
-            nh.getParam("/voice/whisper_node/show_result",     params.show_result);
+            nh.getParam("/utbots/voice/stt/whisper_node/offset_t_ms",     params.offset_t_ms);
+            nh.getParam("/utbots/voice/stt/whisper_node/duration_ms",     params.duration_ms);
+            nh.getParam("/utbots/voice/stt/whisper_node/max_context",     params.max_context);
+            nh.getParam("/utbots/voice/stt/whisper_node/max_len",         params.max_len);
+            nh.getParam("/utbots/voice/stt/whisper_node/word_thold",      params.word_thold);
+            nh.getParam("/utbots/voice/stt/whisper_node/speed_up",        params.speed_up);
+            nh.getParam("/utbots/voice/stt/whisper_node/translate",       params.translate);
+            nh.getParam("/utbots/voice/stt/whisper_node/print_special",   params.print_special);
+            nh.getParam("/utbots/voice/stt/whisper_node/print_progress",  params.print_progress);
+            nh.getParam("/utbots/voice/stt/whisper_node/no_timestamps",   params.no_timestamps);
+            nh.getParam("/utbots/voice/stt/whisper_node/language",        params.language);
+            nh.getParam("/utbots/voice/stt/whisper_node/model",           params.model);
+            nh.getParam("/utbots/voice/stt/whisper_node/print_timings",   params.print_timings);
+            nh.getParam("/utbots/voice/stt/whisper_node/show_result",     params.show_result);
 
             ROS_INFO("[WHISPER] PARAMETERS");
             ROS_INFO("[WHISPER]   - offset_t_ms: %d",       params.offset_t_ms);
