@@ -1,0 +1,28 @@
+<launch>
+
+    <node name="vad_node" pkg="vad_silero_ros" type="vad_node" output="screen">
+        <!-- <remap from="emotion"     to="emotion/emotion" />
+        <param name = "ms_to_process_vad"   value="300" />
+        <param name = "ms_word_interval"    value="1500" />
+        <param name = "ms_buffer_vad_aux"   value="900" /> -->
+    </node>
+
+    <node name="whisper_node" pkg="whisper_cpp_ros" type="whisper_node" output="screen">
+        <param name = "/voice/whisper_node/model"           value = "$(find whisper_cpp_ros)/models/ggml-tiny.en.bin" />
+        <!-- <param name = "offset_t_ms"     value = "0" />
+        <param name = "duration_ms"     value = "0" />
+        <param name = "max_context"     value = "-1" />
+        <param name = "max_len"         value = "60" />
+        <param name = "word_thold"      value = "0.01f" />
+        <param name = "speed_up"        value = "true" />
+        <param name = "translate"       value = "false" />
+        <param name = "print_special"   value = "false" />
+        <param name = "print_progress"  value = "false" />
+        <param name = "no_timestamps"   value = "false" />
+        <param name = "language"        value = "en" />
+        <param name = "model"           value = "$(find whisper_cpp_ros)/models/ggml-base.en.bin" />
+        <param name = "print_timings"   value = "false" />
+        <param name = "show_result"     value = "true" /> -->
+    </node>
+    
+</launch>
