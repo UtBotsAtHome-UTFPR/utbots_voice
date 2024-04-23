@@ -37,11 +37,11 @@ class SpeechSynthesisNode:
 
         # Publishers
         self.pub_ttsActivity = rospy.Publisher(
-            'is_robot_talking', Bool, queue_size=1)
+            '/utbots/voice/tts/is_robot_talking', Bool, queue_size=1)
         
         # Subscribers
         self.sub_text = rospy.Subscriber(
-            "robot_speech", String, self.Callback)
+            "/utbots/voice/tts/robot_speech", String, self.Callback)
 
         # Loop
         self.loopRate = rospy.Rate(30)
