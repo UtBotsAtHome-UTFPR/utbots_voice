@@ -41,21 +41,21 @@ rosrun whisper_cpp_ros whisper_node
 
 ### vad_silero_ros
 
-**File** 
+- File
 
 ``vad_silero_ros/src/vad_node.cpp``
 
-**Program description**
+- Program description
 
 Uses Silero VAD model to perform voice activity detection
 
 ### whisper_cpp_ros
 
-**File** 
+- File 
 
 ``whisper_cpp_ros/src/whisper_node.cpp``
 
-**Program description**
+- Program description
 
 Uses whisper.cpp to perform speech recognition
   
