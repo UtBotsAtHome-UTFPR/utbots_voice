@@ -4,3 +4,6 @@
 [submodule "utbots_stt/whisper_cpp_ros/whisper.cpp"]
 	path = utbots_stt/whisper_cpp_ros/whisper.cpp
 	url = https://github.com/UtBotsAtHome-UTFPR/whisper.cpp.git
+[submodule "utbots_nlu"]
+	path = utbots_nlu
+	url = https://github.com/UtBotsAtHome-UTFPR/utbots_nlu

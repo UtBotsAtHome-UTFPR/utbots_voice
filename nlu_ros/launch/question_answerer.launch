@@ -1,8 +1,0 @@
-<launch>
-    <node pkg="nlu_ros" type="nlu_node.py" name="nlu_node" output="screen">
-        <param name="/commands" value="False" />
-        <param name="/qa" value="True" />
-        <param name="/people" value="False" />
-        <param name="/drinks" value="False" />
-    </node>
-</launch>
