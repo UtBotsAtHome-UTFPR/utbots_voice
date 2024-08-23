@@ -55,7 +55,7 @@ roslaunch utbots_tts tts_mimic.launch
 
 You can test the audio output by sending a text to a topic in another terminal:
 ```bash
-rostopic pub /robot_speech std_msgs/String 'Hello world'
+rostopic pub /utbots/voice/tts/robot_speech std_msgs/String 'Hello world'
 ```
 
 ### Coqui TTS

@@ -31,7 +31,7 @@ See the dependencies installation procedure for each package accessing its READM
 catkin_make -DCMAKE_BUILD_TYPE=Release
 ```
 
-### Running
+## Running
 
 See the usage explanation accessing each package in the repository or below, in [Packages Description](#packages-description).
 
