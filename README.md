@@ -31,6 +31,15 @@ See the dependencies installation procedure for each package accessing its READM
 catkin_make -DCMAKE_BUILD_TYPE=Release
 ```
 
+### Updating
+
+To push changes to the submodule packages (display_emotions, utbots_nlu) you should go to their repository path and perform a simple add, commit and push. After, you have to push the changes to the stack, going back to the stack repository path and doing the following command:
+
+```bash
+git submodule update --remote --merge
+```
+And then, perform a simple add, commit and push in the stack repository.
+
 ## Running
 
 See the usage explanation accessing each package in the repository or below, in [Packages Description](#packages-description).
