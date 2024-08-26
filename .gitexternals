@@ -1,4 +1,0 @@
-[external "utbots_stt/vad_silero_ros/"]
-	path = utbots_stt/vad_silero_ros/
-	url = https://github.com/xiph/rnnoise.git
-	branch = master
