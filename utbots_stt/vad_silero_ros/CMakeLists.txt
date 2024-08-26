@@ -30,8 +30,47 @@ message(STATUS "*** Adding miniaudio lib ***")
 add_compile_definitions(MINIAUDIO_IMPLEMENTATION)
 add_library(lib_miniaudio "src/miniaudio.c")
 
+# # RNNoise library
+message(STATUS "*** Adding RNNoise lib ***")
+#add_library(librnnoise SHARED IMPORTED GLOBAL)
+#set_target_properties(librnnoise PROPERTIES IMPORTED_LOCATION ${RNNOISE_DIR}/.lib/librnnoise.so)
+#include(src/cmake/rnnoise.cmake)
+
+include(ExternalProject)
+
+set(RNNOISE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/rnnoise)
+# set(RNNOISE_BIN ${CMAKE_CURRENT_BINARY_DIR}/rnnoise)
+set(RNNOISE_BIN  ${CMAKE_CURRENT_BINARY_DIR}/rnnoise)
+
+set(RNNOISE_STATIC_LIB ${RNNOISE_BIN}/lib/librnnoise.a)
+#set(RNNOISE_STATIC_LIB ${RNNOISE_DIR}/.libs/librnnoise.so)
+
+set(RNNOISE_INCLUDES ${RNNOISE_BIN}/include)
+
+file(MAKE_DIRECTORY ${RNNOISE_INCLUDES})
+
+ExternalProject_Add(
+    librnnoise
+    # PREFIX ${RNNOISE_BIN}
+    SOURCE_DIR ${RNNOISE_DIR}
+    DOWNLOAD_COMMAND cd ${RNNOISE_DIR} && git clean -dfX && ${RNNOISE_DIR}/autogen.sh
+    CONFIGURE_COMMAND ${RNNOISE_DIR}/configure --srcdir=${RNNOISE_DIR} --prefix=${RNNOISE_BIN} --enable-static=yes  --enable-x86-rtcd --disable-shared
+    BUILD_COMMAND cd ${RNNOISE_DIR} && make 
+    BUILD_IN_SOURCE 1 
+    #INSTALL_COMMAND # make install
+    # BUILD_BYPRODUCTS ${RNNOISE_STATIC_LIB}
+)
+add_library(rnnoise STATIC IMPORTED GLOBAL)
+add_dependencies(rnnoise librnnoise)
+set_target_properties(rnnoise PROPERTIES IMPORTED_LOCATION ${RNNOISE_STATIC_LIB})
+set_target_properties(rnnoise PROPERTIES INTERFACE_INCLUDE_DIRECTORIES ${RNNOISE_INCLUDES})
+
+
 # VAD node
 message(STATUS "*** VAD node ***")
 set(TARGET vad_node)
 add_executable(${TARGET} src/vad_node.cpp)
-target_link_libraries(${TARGET} ${catkin_LIBRARIES} lib_onx ${CMAKE_DL_LIBS} lib_miniaudio)
+target_link_libraries(${TARGET} ${catkin_LIBRARIES} lib_onx ${CMAKE_DL_LIBS} lib_miniaudio rnnoise)
+
+
+

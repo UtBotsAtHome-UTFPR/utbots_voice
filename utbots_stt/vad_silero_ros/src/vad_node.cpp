@@ -11,6 +11,11 @@
 // VAD
 #include "vad_iterator.hpp"
 
+//RNNoise
+#include "rnnoise.h"
+#define FRAME_SIZE 480
+#define CONV 32768.0
+
 // ROS PUBLISHER AND SUBSCRIBER
 ros::Publisher pub_audio;
 ros::Publisher pub_emotion;
@@ -62,12 +67,17 @@ ma_encoder          audio_encoder;
 ma_device_config    audio_device_config;
 ma_device           audio_device;
 
+//RNNoise classes
+
+DenoiseState *st;
+
+
 // FUNCTION DECLARATIONS
 void        CallbackTTSActivity(const std_msgs::Bool::ConstPtr& msg);
-void        CallbackAudio(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frame_count);
+void        CallbackAudio(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frame_count );
 const void  ResizeAuxBuffer();
 const void  UpdateVoiceBuffer();
-const void  UpdateVoiceActivityStatus();
+const void  UpdateVoiceActivityStatus(  );
 const bool  EvaluateSpeechPresence();
 const bool  RunFailsafeVAD();
 const void  InitAudioCapture();
@@ -75,15 +85,23 @@ const void  PublishBuffer(std::vector<int16_t>* buffer);
 const void  JoinFrames(std::vector<int16_t>* frames_input, std::vector<int16_t>* frames_output);
 const void  ClearFrames(std::vector<int16_t>* frames);
 const void  WriteFramesToFile(std::vector<int16_t>* frames);
+const void  noise_interference(std::vector<int16_t> & buffer );
+
+ 
 
 int main(int argc, char **argv)
 {
+    //RNNoise
+    st=rnnoise_create(NULL);
+
+    
     // ROS
     ros::init(argc, argv, "vad_node");
     ros::NodeHandle nh;
     pub_audio = nh.advertise<std_msgs::Int16MultiArray>("/utbots/voice/stt/voice_signal", 100);
     pub_emotion = nh.advertise<std_msgs::String>("/utbots/voice/tts/emotion", 100);
     sub_tts_activity = nh.subscribe("/utbots/voice/tts/is_robot_talking", 1, CallbackTTSActivity);
+
 
     // GET PARAMS
     nh.getParam("vad_node/ms_to_process_vad", ms_to_process_vad);
@@ -122,7 +140,7 @@ void CallbackTTSActivity(const std_msgs::Bool::ConstPtr& msg)
         ROS_INFO("[VAD] VAD enabled, no tts is happening");
 }
 
-void CallbackAudio(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frame_count)
+void CallbackAudio(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frame_count )
 {
     // Store frames as vector and append to buffer
     std::vector<int16_t> current_frames(frame_count);
@@ -183,6 +201,7 @@ const void UpdateVoiceActivityStatus()
                 if (RunFailsafeVAD()) {
                     JoinFrames(&buffer_voice_only, &buffer_vad_aux);
                     WriteFramesToFile(&buffer_vad_aux);
+                    noise_interference(buffer_vad_aux);
                     PublishBuffer(&buffer_vad_aux);
                     ClearFrames(&buffer_vad_aux);
                 }
@@ -307,4 +326,15 @@ const void PublishBuffer(std::vector<int16_t>* buffer)
     std_msgs::Int16MultiArray msg;
     msg.data = *buffer;
     pub_audio.publish(msg);
+}
+
+const void noise_interference(std::vector<int16_t> & buffer ){
+        int bf_len = buffer.size();
+        int frames= bf_len/FRAME_SIZE;
+        float tmp [bf_len];
+        for(int i=0;i<frames;i++){
+            for (int j=0;i<FRAME_SIZE;i++) tmp[i+j] = static_cast<float>(buffer[i+j]) / CONV ;
+            rnnoise_process_frame(st, tmp, tmp);
+              for (int k=0;i<FRAME_SIZE;i++) buffer[i+k] = static_cast<int16_t>(tmp[i+k] * CONV);
+        }
 }

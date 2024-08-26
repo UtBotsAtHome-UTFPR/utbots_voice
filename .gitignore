@@ -1,4 +1,4 @@
 .vscode/*
 *.bin
 resources/models/*
-utbots_tts/resources/audios/indexed/*.wav
+utbots_tts/resources/audios/indexed/*.wavutbots_stt/vad_silero_ros/
