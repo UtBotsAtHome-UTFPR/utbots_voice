@@ -1,0 +1,7 @@
+engine|voice|phrase|language|wav
+coqui|en|Hello there.|en|0.wav
+coqui|tts_models/en/ljspeech/tacotron2-DDC|Hello there.|en|1.wav
+coqui|tts_models/en/ljspeech/tacotron2-DDC|This is a test of the TTS system.|en|2.wav
+coqui|tts_models/en/ljspeech/tacotron2-DDC|Lets synthesize some more speech.|en|3.wav
+coqui|tts_models/en/ljspeech/tacotron2-DDC|Monkey banana elephant|en|4.wav
+coqui|tts_models/en/ljspeech/tacotron2-DDC|Monkey, banana, elephant|en|5.wav

@@ -1,4 +1,16 @@
 .vscode/*
 *.bin
 resources/models/*
+utbots_stt/.vad_silero_ros
+utbots_stt/.whisper_cpp_ros
+utbots_stt/vad_ros/.vscode
+utbots_stt/vad_ros/snakers4_silero-vad_master
+utbots_stt/vad_ros/vad_ros/__pycache__
+utbots_stt/vad_ros/vad_ros/.test
+utbots_stt/whisper_ros/whisper_ros/.hf-cache
+utbots_stt/whisper_ros/whisper_ros/.test
+utbots_tts/.src
+utbots_tts/ros_tts/coqui-ai-TTS
+utbots_tts/ros_tts/ros_tts/.large
+utbots_tts/ros_tts/ros_tts/.large/tts_module.py
 utbots_tts/resources/audios/indexed/*.wavutbots_stt/vad_silero_ros/
