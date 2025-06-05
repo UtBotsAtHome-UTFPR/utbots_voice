@@ -24,6 +24,7 @@ setup(
     entry_points={
         'console_scripts': [
             'whisper_node = whisper_ros.whisper_node:main',
+            'whisper_full_node = whisper_ros.whisper_full_node:main',
         ],
     },
     extras_require={
