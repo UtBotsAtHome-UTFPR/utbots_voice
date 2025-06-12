@@ -13,8 +13,7 @@
   - Performs speech recogition
   - [Demonstration](https://www.youtube.com/watch?v=3EmWbu2jJg0)
 
-
-
+![alt text](image-1.png)
 
 ## Installation
 
@@ -23,7 +22,7 @@
 ```bash
 
 ##For whisper:
-pip install --upgrade transformers datasets[audio] accelerate
+pip install --upgrade transformers accelerate
 
 ##Extra: pip install flash-attn --no-build-isolation ## May not work
 
@@ -32,9 +31,12 @@ pip install --upgrade transformers datasets[audio] accelerate
 ## Building recomended:
 
 ```bash
-colcon build --packages-select vad_ros whisper_ros utbots_actions utbots_srvs utbots_msgs \ 
+colcon build --packages-select vad_ros whisper_ros utbots_actions utbots_srvs utbots_msgs \
 --allow-overriding utbots_msgs utbots_actions utbots_srvs \
-&& source install/setup.bash ## \
+&& source install/setup.bash \
+## --symlink-install \ ## if possible
+
+## \
 ## --symlink-install ## if possible
 ```
 
@@ -104,6 +106,11 @@ ros2 action send_goal /Transcription utbots_actions/action/Transcription {}\
 - Evaluate  **Distil-Whisper: Distil-Large-v3.5**
   https://huggingface.co/distil-whisper/distil-large-v3.5
 - Requirements for Whisper, VAD and RNNoise instalation
+
+#### TODO (how to do):
+- install RNNoise ( make install ! ) (( https://github.com/xiph/rnnoise ))
+- install RNNoise_Wrapper (https://github.com/dbklim/RNNoise_Wrapper)
+- see vad silero notebook ( https://github.com/snakers4/silero-vad/blob/master/examples/pyaudio-streaming/pyaudio-streaming-examples.ipynb )
 
 
 ###### References:

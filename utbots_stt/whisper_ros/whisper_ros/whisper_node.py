@@ -6,6 +6,7 @@ from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 from std_msgs.msg import String
 from std_msgs.msg import Int16MultiArray
 # from utbots_srvs.srv import ManageModel  # Replace with your service definition
+from utbots_srvs.srv import LoadModel
 
 
 import pywhispercpp as whisper
@@ -52,13 +53,13 @@ class WhisperTranscriber(Node):
             callback_group=self.audio_cb_group
         )
         
-        # Create service for model management
-        # self.model_service = self.create_service(
-        #     ManageModel,
-        #     'manage_whisper_model',
-        #     self.manage_model_callback,
-        #     callback_group=self.service_cb_group
-        # )
+        #Create service for model management
+        self.model_service = self.create_service(
+            LoadModel,
+            'manage_whisper_model',
+            self.manage_model_callback,
+            callback_group=self.service_cb_group
+        )
         
         self.get_logger().info("Whisper Transcriber Node initialized")
     
@@ -97,7 +98,7 @@ class WhisperTranscriber(Node):
     def manage_model_callback(self, request, response):
         """Service callback for model management"""
         if request.load_model:
-            response.success = self.load_model(request.model_name)
+            response.success = self.load_model(request.data)
         else:
             response.success = self.unload_model()
         return response

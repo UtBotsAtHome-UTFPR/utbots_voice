@@ -3,7 +3,7 @@ from std_msgs.msg import Bool
 from std_srvs.srv import SetBool
 from rclpy.action import ActionServer
 from utbots_msgs.msg import StringArray
-from utbots_srvs.srv import SetString
+from utbots_srvs.srv import LoadModel
 
 
 import rclpy
@@ -18,6 +18,7 @@ from ament_index_python.packages import get_package_share_directory
 from whisper_ros.whisper_class import *
 from rcl_interfaces.msg import ParameterDescriptor
 from utbots_actions.action import Transcription
+
 import threading
 
 class WhisperTranscriber(Node):
@@ -116,7 +117,7 @@ class WhisperTranscriber(Node):
         
         #Create service for model management
         self.model_service = self.create_service(
-            SetString,
+            LoadModel,
             'whisper_model',
             self.manage_model_callback,
             callback_group=self.audio_cb_group,
@@ -133,7 +134,7 @@ class WhisperTranscriber(Node):
     def manage_model_callback(self, request, response):
         """Service callback for model management"""
         if request.load_model:
-            response.success = self.load_model(request.model_name)
+            response.success = self.load_model(request.data)
         else:
             response.success = self.unload_model()
         return response

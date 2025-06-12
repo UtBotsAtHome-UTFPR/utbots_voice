@@ -228,7 +228,7 @@ class AudioPublisher(Node):
 
     def write2file (self,audio):
         import wave
-        WAVE_OUTPUT_FILENAME = f"/home/ehg2004/utbots_ws/.tmp/voice{self.i}.wav"
+        WAVE_OUTPUT_FILENAME = f"~/utbots_ws/.tmp/voice{self.i}.wav"
         self.i=self.i+1
         wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
         wf.setnchannels(self.CHANNELS)
@@ -313,8 +313,7 @@ class AudioPublisher(Node):
 
         # Process in frames (RNNoise expects 960 bytes = 480 samples @ 16-bit)
         frame_size = 960  # 480 samples * 2 bytes
-        frames = [audio_bytes[i:i+frame_size] 
-                for i in range(0, len(audio_bytes), frame_size)]
+        frames = [audio_bytes[i:i+frame_size] for i in range(0, len(audio_bytes), frame_size)]
         
         # Process each frame
         # print("Processed:")
