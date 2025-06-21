@@ -1,0 +1,3 @@
+[submodule "utbots_nlu"]
+	path = utbots_nlu
+	url = https://github.com/UtBotsAtHome-UTFPR/utbots_nlu.git
