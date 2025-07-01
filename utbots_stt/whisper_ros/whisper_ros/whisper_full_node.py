@@ -26,7 +26,7 @@ class WhisperTranscriber(Node):
         super().__init__('whisper_transcriber')
 
         self.declare_parameter('whisper_verbose', False , ParameterDescriptor(description='whisper_verbose in Bool'))
-        self.vebose = self.get_parameter('whisper_verbose').get_parameter_value().bool_value
+        self.verbose = self.get_parameter('whisper_verbose').get_parameter_value().bool_value
         self.declare_parameter('enable_synchronous_startup', False , ParameterDescriptor(description='start with sync transcription'))
         self.sync_whisper = self.get_parameter('enable_synchronous_startup').get_parameter_value().bool_value
 
@@ -100,7 +100,7 @@ class WhisperTranscriber(Node):
         self._action_server = ActionServer(
             self,
             Transcription,
-            'Transcription',
+            '/utbots/transcription',
             self.execute_callback,
             callback_group=self.audio_cb_group
         )
@@ -158,7 +158,7 @@ class WhisperTranscriber(Node):
                 transcript_msg = String()
                 transcript_msg.data = transcription
                 self.transcription_pub.publish(transcript_msg)
-                if(self.vebose):
+                if(self.verbose):
                     self.get_logger().info(f"Transcription: {transcription}")
             except Exception as e:
                 self.get_logger().error(f"Error processing audio: {str(e)}")
@@ -192,7 +192,7 @@ class WhisperTranscriber(Node):
                 transcript_msg = String()
                 transcript_msg.data = transcription
                 result.text=transcript_msg
-                if(self.vebose):
+                if(self.verbose):
                     self.get_logger().info(f"Transcription: {transcription}")
                 goal_handle.succeed()
                 return result
@@ -207,13 +207,13 @@ class WhisperTranscriber(Node):
             return False
         try:
             self.get_logger().info(f"Loading whisper model: {model_name}")
-            self.model = WhisperASR(model_name)
+            self.model = WhisperASR(model=model_name,verbose=self.verbose)
             self.model_loaded = True
-            if(self.vebose):
+            if(self.verbose):
                 self.get_logger().info("Model loaded successfully")
             return True
         except Exception as e:
-            if(self.vebose):
+            if(self.verbose):
                 self.get_logger().error(f"Failed to load model: {str(e)}")
             self.model_loaded = False
             return False

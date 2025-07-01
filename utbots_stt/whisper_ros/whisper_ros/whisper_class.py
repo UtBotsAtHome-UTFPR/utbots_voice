@@ -2,6 +2,7 @@ import torch
 from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
 from datasets import load_dataset
 import gc
+import numpy as np
 TINY="openai/whisper-tiny.en"
 LV3_t="openai/whisper-large-v3-turbo"
 CHUNK_LENGHT=15
@@ -9,11 +10,12 @@ BATCH=8
 TIMESTAMPS=False
 
 class WhisperASR:
-    def __init__(self,model=LV3_t,parameters=None,load_def=True):
+    def __init__(self,model=LV3_t,parameters=None,load_def=True,verbose=False):
         self.model_name = model
         self.model = None
         self.processor = None
         self.pipe = None
+        self.verbose=verbose
         self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
         self.torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
         if(load_def==True):
@@ -31,7 +33,7 @@ class WhisperASR:
             ).to(self.device)
             
             self.processor = AutoProcessor.from_pretrained(model_id)
-            
+            pipeline()
             self.pipe = pipeline(
                 "automatic-speech-recognition",
                 model=self.model,
@@ -43,13 +45,13 @@ class WhisperASR:
                 return_timestamps=TIMESTAMPS,
                 # stride_length_s=[6, 4],  # Stride for context overlap
                 # stride_length_s=(0.5, 0.5),
-                generate_kwargs={
-                    "language": "english",          # Force English language
-                    "task": "transcribe",      # or "translate"
-                    # "beam_size": 5,            # Optional: beam search
-                    # "temperature": 0.0,        # Optional: decoding temperature
-                    # "no_repeat_ngram_size": 3 # Optional: avoid repeating phrases
-    }
+    #             generate_kwargs={
+    #                 "language": "english",          # Force English language
+    #                 "task": "transcribe",      # or "translate"
+    #                 "beam_size": 5,            # Optional: beam search
+    #                 "temperature": 0.0,        # Optional: decoding temperature
+    #                 "no_repeat_ngram_size": 3 # Optional: avoid repeating phrases
+    # }
             )
             print("Model successfully loaded")
         except Exception as e:
@@ -90,6 +92,8 @@ class WhisperASR:
             return None
         
         try:
+            audio_padded = self.audio_padding(audio=audio)
+
             result=self.pipe(audio,
                                 return_timestamps=TIMESTAMPS,  # Enable timestamps if needed
                                 batch_size=BATCH,  # Adjust based on your memory
@@ -100,3 +104,12 @@ class WhisperASR:
         except Exception as e:
             print(f"Transcription error: {str(e)}")
             return None
+
+    def audio_padding(self,audio):
+        sample_rate=16_000
+        if audio.shape[-1] < sample_rate * 5:
+            pad_length = sample_rate * 5 - audio.shape[-1]
+            if(self.verbose):
+                print("audio padded!")
+            return(np.pad(audio, (0, pad_length), mode="constant"))
+        return audio

@@ -24,6 +24,9 @@ class CoquiTTSActionServer(Node):
         self.declare_parameter('verbose', False , ParameterDescriptor(description='verbose -> Bool'))
         self.declare_parameter('package_path', PATH , ParameterDescriptor(description='verbose -> string'))
 
+        self.declare_parameter('is_robot_talking', False , ParameterDescriptor(description=''))
+
+
         self.verbose=self.get_parameter('verbose').get_parameter_value().bool_value
         self.package_share_directory = self.get_parameter('package_path').get_parameter_value().string_value
 
@@ -64,25 +67,33 @@ class CoquiTTSActionServer(Node):
         self._action_server = ActionServer(
             self,
             TextToSpeech,
-            'tts',
+            '/utbots/tts',
             self.execute_callback)
+        
+        self.get_logger().info("[TTS] Synthesizer ok")
+
 
     def execute_callback(self, goal_handle):
             
         self.get_logger().info('Executing goal...')
-        text = goal_handle.request.text
-        # self.param_istalking = rospy.set_param("/vad_node/is_robot_talking", True) 
-        self.set_parameters([ rclpy.parameter.Parameter(
-                    'is_robot_talking',
-                    rclpy.Parameter.Type.BOOL,
-                    True
-                )])
-        self.tts_module.speak(text)
-        self.set_parameters([ rclpy.parameter.Parameter(
+        try:
+            text = str(goal_handle.request.text.data)
+            # self.param_istalking = rospy.set_param("/vad_node/is_robot_talking", True) 
+            self.set_parameters([ rclpy.parameter.Parameter(
                         'is_robot_talking',
-                    rclpy.Parameter.Type.BOOL,
-                    False
+                        rclpy.Parameter.Type.BOOL,
+                        True
                     )])
+            self.tts_module.speak(text)
+            self.set_parameters([ rclpy.parameter.Parameter(
+                            'is_robot_talking',
+                        rclpy.Parameter.Type.BOOL,
+                        False
+                        )])
+            goal_handle.succeed()
+        except Exception as e:
+            self.get_logger().error(f"Error processing Goal: {str(e)}")
+            goal_handle.abort()
         result = TextToSpeech.Result()
         return result
 

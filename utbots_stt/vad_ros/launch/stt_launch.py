@@ -10,9 +10,10 @@ def generate_launch_description():
             output='screen',
             emulate_tty=True,
             parameters=[
-                {'vad_timeout': 5_000,
-                 'vad_threshold':0.5,
-                 'vad_verbose':False    ,
+                {'vad_timeout': 3_000,#em ms
+                 'vad_threshold':0.90,
+                'vad_verbose':True,
+               'disable_denoiser':True,
 
                   }
             ]
@@ -39,12 +40,12 @@ def generate_launch_description():
                 {
                         'whisper_verbose':True,
                         'enable_synchronous_startup':False,
-                        'timer_period':0.5,
+                        'timer_period':0.1,
                         'whisper_model':"openai/whisper-large-v3-turbo",
                         # 'whisper_model':"openai/whisper-tiny.en",
                         'whisper_startup':True,
-                        'enable_synchronous_startup':False,
-                        'wait_timeout':12.0
+                        # 'enable_synchronous_startup':False,
+                        'wait_timeout':15.0
                   }
             ]
         )
