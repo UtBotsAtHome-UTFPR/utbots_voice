@@ -8,7 +8,7 @@ LV3_t="openai/whisper-large-v3-turbo"
 CHUNK_LENGHT=15
 BATCH=8
 TIMESTAMPS=False
-
+SAMPLE_R=16_000
 class WhisperASR:
     def __init__(self,model=LV3_t,parameters=None,load_def=True,verbose=False):
         self.model_name = model
@@ -33,7 +33,6 @@ class WhisperASR:
             ).to(self.device)
             
             self.processor = AutoProcessor.from_pretrained(model_id)
-            pipeline()
             self.pipe = pipeline(
                 "automatic-speech-recognition",
                 model=self.model,
@@ -94,7 +93,7 @@ class WhisperASR:
         try:
             audio_padded = self.audio_padding(audio=audio)
 
-            result=self.pipe(audio,
+            result=self.pipe(audio_padded,
                                 return_timestamps=TIMESTAMPS,  # Enable timestamps if needed
                                 batch_size=BATCH,  # Adjust based on your memory
                                 # chunk_length_s=CHUNK_LENGHT
@@ -106,9 +105,9 @@ class WhisperASR:
             return None
 
     def audio_padding(self,audio):
-        sample_rate=16_000
-        if audio.shape[-1] < sample_rate * 5:
-            pad_length = sample_rate * 5 - audio.shape[-1]
+        #SAMPLE_R : 16kHz
+        if audio.shape[-1] < SAMPLE_R * 5:
+            pad_length = SAMPLE_R * 5 - audio.shape[-1]
             if(self.verbose):
                 print("audio padded!")
             return(np.pad(audio, (0, pad_length), mode="constant"))

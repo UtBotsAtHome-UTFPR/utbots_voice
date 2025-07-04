@@ -3,6 +3,8 @@ from time import time,time_ns
 import rclpy
 from rclpy.executors import ExternalShutdownException
 from rclpy.node import Node
+from std_srvs.srv import SetBool
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 
 import rclpy.time
 from std_msgs.msg import Int16MultiArray
@@ -34,7 +36,7 @@ class AudioPublisher(Node):
         self.declare_parameter('vad_threshold', 0.5 , ParameterDescriptor(description='vad_threshold in float'))
         self.declare_parameter('vad_verbose', False , ParameterDescriptor(description='vad_verbose in Bool'))
         self.declare_parameter('disable_denoiser', False , ParameterDescriptor(description='disable_denoiser in Bool'))
-        self.declare_parameter('/is_robot_talking', False , ParameterDescriptor(description='vad_verbose in Bool'))
+        # self.declare_parameter('/is_robot_talking', False , ParameterDescriptor(description='vad_verbose in Bool'))
 
         self.vad_thresh = self.get_parameter('vad_threshold').get_parameter_value().double_value
         
@@ -48,6 +50,14 @@ class AudioPublisher(Node):
                               model='silero_vad',
                               force_reload=False)
         
+        self.disable_vad_srv = self.create_service(
+            SetBool,
+            '/utbots/disable_vad',
+            self.disable_vad_cb,
+            # callback_group=self.service_cb_group
+        )
+
+        self.vad_disable=False
         
         (self.get_speech_timestamps,
         self.save_audio,
@@ -63,7 +73,7 @@ class AudioPublisher(Node):
         self.audio = pyaudio.PyAudio()
 
         # Audio processing queue
-        self.audio_queue = Queue(maxsize=100)  # Adjust size as needed
+        self.audio_queue = Queue(maxsize=1000)  # Adjust size as needed
         self.queue_lock = Lock()
 
         # self.num_samples = 512
@@ -96,7 +106,13 @@ class AudioPublisher(Node):
         #NEED TO BE REFORMULATED:
         # self.i=0
         # self.test_whisper()
-    
+
+    def disable_vad_cb(self, request, response):
+        self.vad_disable = request.data
+        response.success = True
+        response.message = "vad disabled" if self.vad_disable else "vad enabled"
+        return response
+
     def audio_callback(self, in_data, frame_count, time_info, status):
         # Convert bytes to message and publish
 
@@ -114,7 +130,7 @@ class AudioPublisher(Node):
         if self.audio_queue.empty():
             return
 
-        if(self.get_parameter('/is_robot_talking').get_parameter_value().bool_value):
+        if(self.vad_disable):
             self.flush_audio()
             return
 

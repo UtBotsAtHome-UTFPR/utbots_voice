@@ -10,6 +10,9 @@ from rclpy.node import Node
 from rcl_interfaces.msg import ParameterDescriptor
 import time
 from utbots_actions.action import TextToSpeech
+from std_srvs.srv import SetBool
+from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
+
 
 class CoquiTTSActionServer(Node):
 
@@ -25,7 +28,8 @@ class CoquiTTSActionServer(Node):
         self.declare_parameter('package_path', PATH , ParameterDescriptor(description='verbose -> string'))
 
         self.declare_parameter('is_robot_talking', False , ParameterDescriptor(description=''))
-
+        
+        cb_group=MutuallyExclusiveCallbackGroup()
 
         self.verbose=self.get_parameter('verbose').get_parameter_value().bool_value
         self.package_share_directory = self.get_parameter('package_path').get_parameter_value().string_value
@@ -42,7 +46,11 @@ class CoquiTTSActionServer(Node):
                 use_cuda=self.get_parameter('use_cuda').get_parameter_value().bool_value,
                 verbose=self.verbose
                 )
-
+        self.disable_vad_cli = self.create_client(
+            SetBool,
+            '/utbots/disable_vad',
+            # callback_group=cb_group
+            )
 
         time.sleep(10)  # Pause execution for 5 seconds
         # if(self.verbose):
@@ -61,48 +69,57 @@ class CoquiTTSActionServer(Node):
         #     self.get_logger().info("[TTS] Language mode: {}".format(
         #         self.tts_module.param_languageMode))
         #     self.get_logger().info("[TTS] Index CSV: {}".format(self.tts_module.csvPath))
-        self.get_logger().info("[TTS] Synthesizer ok")
-
         
         self._action_server = ActionServer(
             self,
             TextToSpeech,
             '/utbots/tts',
-            self.execute_callback)
+            self.execute_callback,
+            # callback_group=cb_group
+            )
         
         self.get_logger().info("[TTS] Synthesizer ok")
+    
+    def send_request(self, disable_vad):
+        while not self.disable_vad_cli.wait_for_service(timeout_sec=1.0):
+            self.get_logger().warn('Waiting for /utbots/disable_vad...')
+        try:
+            req=SetBool.Request()
+            req.data=disable_vad
+            future = self.disable_vad_cli.call_async(req)
+            rclpy.spin_until_future_complete(self, future)
+            result=future.result()
+            self.get_logger().info(f"Service response: {result.message}")
+        except Exception as e:
+            self.get_logger().error(f'Service call failed: {e}')
+        return result
 
-
-    def execute_callback(self, goal_handle):
+    async def execute_callback(self, goal_handle):
             
         self.get_logger().info('Executing goal...')
         try:
             text = str(goal_handle.request.text.data)
-            # self.param_istalking = rospy.set_param("/vad_node/is_robot_talking", True) 
-            self.set_parameters([ rclpy.parameter.Parameter(
-                        'is_robot_talking',
-                        rclpy.Parameter.Type.BOOL,
-                        True
-                    )])
+
+            self.send_request(True)
+
             self.tts_module.speak(text)
-            self.set_parameters([ rclpy.parameter.Parameter(
-                            'is_robot_talking',
-                        rclpy.Parameter.Type.BOOL,
-                        False
-                        )])
+
+            self.send_request(False)
+
             goal_handle.succeed()
         except Exception as e:
             self.get_logger().error(f"Error processing Goal: {str(e)}")
             goal_handle.abort()
         result = TextToSpeech.Result()
         return result
-
+    
+from rclpy.executors import MultiThreadedExecutor
 def main(args=None):
     rclpy.init(args=args)
 
     coqui_ActionServer = CoquiTTSActionServer()
 
-    rclpy.spin(coqui_ActionServer)
+    rclpy.spin(coqui_ActionServer,MultiThreadedExecutor())
     rclpy.shutdown()
 
 

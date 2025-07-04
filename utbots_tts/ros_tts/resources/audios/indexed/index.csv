@@ -5,3 +5,8 @@ coqui|tts_models/en/ljspeech/tacotron2-DDC|This is a test of the TTS system.|en|
 coqui|tts_models/en/ljspeech/tacotron2-DDC|Lets synthesize some more speech.|en|3.wav
 coqui|tts_models/en/ljspeech/tacotron2-DDC|Monkey banana elephant|en|4.wav
 coqui|tts_models/en/ljspeech/tacotron2-DDC|Monkey, banana, elephant|en|5.wav
+coqui|tts_models/en/ljspeech/tacotron2-DDC|bathroom|en|6.wav
+coqui|tts_models/en/ljspeech/tacotron2-DDC|Hi. My name is Hestia|en|7.wav
+coqui|tts_models/en/ljspeech/tacotron2-DDC|Hello, my name is hestia! I wasnt able to understand what you said to me!|en|8.wav
+coqui|tts_models/en/ljspeech/tacotron2-DDC|hello|en|9.wav
+coqui|tts_models/en/ljspeech/tacotron2-DDC|hello.|en|10.wav

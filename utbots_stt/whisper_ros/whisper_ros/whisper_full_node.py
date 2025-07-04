@@ -42,17 +42,11 @@ class WhisperTranscriber(Node):
         
         self.declare_parameter('whisper_startup', True , ParameterDescriptor(description='whisper_startup'))
         # self.startup = self.get_parameter('whisper_startup').get_parameter_value().string_value
-
-        # WhisperASR_parameter={
-        #     "brand": "Ford",
-        #     "model": "Mustang",
-        #     "year": 1964
-        # }
-
-        # Initialize variables
         
-        if(self.get_parameter('whisper_startup').get_parameter_value().bool_value):
-            self.model = WhisperASR(model=self.get_parameter('whisper_model').get_parameter_value().string_value)
+        # Initialize variables
+        if(self.get_parameter('whisper_startup').get_parameter_value().bool_value==True):
+            self.model = WhisperASR(model=self.get_parameter('whisper_model').get_parameter_value().string_value,
+                                    verbose=self.verbose)
             self.model_loaded = True
         else:
             self.model = None
@@ -161,7 +155,7 @@ class WhisperTranscriber(Node):
                 if(self.verbose):
                     self.get_logger().info(f"Transcription: {transcription}")
             except Exception as e:
-                self.get_logger().error(f"Error processing audio: {str(e)}")
+                self.get_logger().error(f"Error processing audio (inside whisperASR): {str(e)}")
 
     async def execute_callback(self, goal_handle):
         
