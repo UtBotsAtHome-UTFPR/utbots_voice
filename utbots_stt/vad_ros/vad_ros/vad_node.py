@@ -319,6 +319,7 @@ class AudioPublisher(Node):
         self.data = np.array([], dtype=np.int16)
         return 0
 
+from rclpy.executors import MultiThreadedExecutor
 
 def main(args=None):
     rclpy.init(args=args)
@@ -326,7 +327,7 @@ def main(args=None):
 
     try:
         while rclpy.ok():
-            rclpy.spin_once(node, timeout_sec=0.1)  # Non-blocking
+            rclpy.spin_once(node, timeout_sec=0.1,executor=MultiThreadedExecutor())  # Non-blocking
             node.process_audio_from_queue()
     except KeyboardInterrupt:
         pass

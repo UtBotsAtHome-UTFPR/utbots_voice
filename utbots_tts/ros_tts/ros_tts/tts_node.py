@@ -13,7 +13,7 @@ from utbots_actions.action import TextToSpeech
 from std_srvs.srv import SetBool
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 
-
+import asyncio
 class CoquiTTSActionServer(Node):
 
     def __init__(self):
@@ -49,10 +49,8 @@ class CoquiTTSActionServer(Node):
         self.disable_vad_cli = self.create_client(
             SetBool,
             '/utbots/disable_vad',
-            # callback_group=cb_group
+            callback_group=cb_group
             )
-
-        time.sleep(10)  # Pause execution for 5 seconds
         # if(self.verbose):
         #     self.get_logger().info("[TTS] Verbose enabled")
         #     self.get_logger().info("[TTS] Model path: {}".format(self.tts_module.param_model_path))
@@ -75,44 +73,79 @@ class CoquiTTSActionServer(Node):
             TextToSpeech,
             '/utbots/tts',
             self.execute_callback,
-            # callback_group=cb_group
+            callback_group=cb_group
             )
         
         self.get_logger().info("[TTS] Synthesizer ok")
     
-    def send_request(self, disable_vad):
+    # async def send_request(self, disable_vad):
+    #     while not self.disable_vad_cli.wait_for_service(timeout_sec=1.0):
+    #         self.get_logger().warn('Waiting for /utbots/disable_vad...')
+    #     try:
+    #         req=SetBool.Request()
+    #         req.data=disable_vad
+    #         future = self.disable_vad_cli.call_async(req)
+    #         # rclpy.spin_until_future_complete(self, future)
+    #         result=future.result()
+    #         self.get_logger().info(f"Service response: {result.message}")
+    #     except Exception as e:
+    #         self.get_logger().error(f'Service call failed: {e}')
+    #     return result
+    async def send_request(self, disable_vad: bool):
         while not self.disable_vad_cli.wait_for_service(timeout_sec=1.0):
             self.get_logger().warn('Waiting for /utbots/disable_vad...')
-        try:
-            req=SetBool.Request()
-            req.data=disable_vad
-            future = self.disable_vad_cli.call_async(req)
-            rclpy.spin_until_future_complete(self, future)
-            result=future.result()
+            await asyncio.sleep(1.0)
+
+        req = SetBool.Request()
+        req.data = disable_vad
+        future = self.disable_vad_cli.call_async(req)
+        await future
+        result = future.result()
+        if result:
             self.get_logger().info(f"Service response: {result.message}")
-        except Exception as e:
-            self.get_logger().error(f'Service call failed: {e}')
         return result
 
-    async def execute_callback(self, goal_handle):
+    # async def execute_callback(self, goal_handle):
             
+    #     self.get_logger().info('Executing goal...')
+    #     try:
+    #         text = str(goal_handle.request.text.data)
+    #         self.get_logger().info(f"Sending request to disable VAD: {text}")
+
+    #         self.send_request(True)
+
+    #         self.tts_module.speak(text)
+    #         self.get_logger().info(f"Sending request to enable VAD: {text}")
+    #         # self.send_request(False)
+    #         self.get_logger().info(f"Sucess 1")
+
+    #         goal_handle.succeed()
+    #         self.get_logger().info(f"Sucess 2")
+    #     except Exception as e:
+    #         self.get_logger().error(f"Error processing Goal: {str(e)}")
+    #         goal_handle.abort()
+    #     result = TextToSpeech.Result()
+    #     return result
+    async def execute_callback(self, goal_handle):
         self.get_logger().info('Executing goal...')
         try:
             text = str(goal_handle.request.text.data)
+            self.get_logger().info(f"Sending request to disable VAD")
 
-            self.send_request(True)
+            await self.send_request(True)  # ✅ async now
 
             self.tts_module.speak(text)
 
-            self.send_request(False)
+            self.get_logger().info(f"Sending request to enable VAD")
+            await self.send_request(False)  # Uncomment if needed
 
             goal_handle.succeed()
         except Exception as e:
             self.get_logger().error(f"Error processing Goal: {str(e)}")
             goal_handle.abort()
-        result = TextToSpeech.Result()
-        return result
-    
+
+        return TextToSpeech.Result()
+
 from rclpy.executors import MultiThreadedExecutor
 def main(args=None):
     rclpy.init(args=args)

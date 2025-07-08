@@ -109,30 +109,8 @@ class WhisperASR:
         
         try:
             audio_padded = self.audio_padding(audio=audio)
-
-            result=self.pipe(
-                            audio_padded,
-                            # return_timestamps=TIMESTAMPS,  # Enable timestamps if needed
-                            # batch_size=BATCH,  # Adjust based on your memory
-                            # chunk_length_s=CHUNK_LENGHT
-                            # generate_kwargs = {
-                            #     # "max_new_tokens": 448,
-                            #     "num_beams": 1,
-                            #     "condition_on_prev_tokens": False,
-                            #     "compression_ratio_threshold": 1.35,  # zlib compression ratio threshold (in token space)
-                            #     "temperature": (0.0),#(0.0, 0.2, 0.4, 0.6, 0.8, 1.0),
-                            #     "logprob_threshold": -1.0,
-                            #     "no_speech_threshold": 0.6,
-                            #     "return_timestamps": False,
-                            #     "language": "english",          # Force English language
-                            #     "task": "translate",      # or "transcribe"
-                            #     # "beam_size": 5,            # Optional: beam search
-                            #     "temperature": 0.0,        # Optional: decoding temperature
-                            #     "no_repeat_ngram_size": 3 # Optional: avoid repeating phrases
-                            #     },
-                            generate_kwargs = self.generate_kwargs
-
-                            )
+            result=self.pipe(audio_padded,
+                            generate_kwargs = self.generate_kwargs)
             print(result["text"])
             return result
         except Exception as e:
