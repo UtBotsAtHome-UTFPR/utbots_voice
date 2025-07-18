@@ -1,6 +1,10 @@
 from launch import LaunchDescription
 from launch_ros.actions import Node
 
+# ros2 launch vad_ros stt_launch.py whisper_sync_start:='true' 
+# vad_timeout:='1_000' vad_threshold:='0.75'  whisper_def_model:='openai/whisper-large-v3-turbo' 
+# whisper_startup:=True verbose:=true
+
 from launch import LaunchDescription
 from launch_ros.actions import Node
 from ament_index_python.packages import get_package_share_directory
@@ -36,8 +40,8 @@ def stt_launch_setup(context, *args, **kwargs):
             emulate_tty=True,
             parameters=[
             {
-                'vad_timeout': vad_timeout if (vad_timeout) < 5_000 and (vad_timeout) > 0.0 else 500,
-                'vad_threshold': vad_threshold if (vad_threshold) < 1.0 and (vad_threshold) > 0.0 else 0.5,
+                'vad_timeout': vad_timeout if (vad_timeout) < 5_000 and (vad_timeout) > 0.0 else 1_500,
+                'vad_threshold': vad_threshold if (vad_threshold) < 1.0 and (vad_threshold) > 0.0 else 0.75,
                 'vad_verbose':verbose,
                 'disable_denoiser':disable_denoiser,
                 }
@@ -54,7 +58,7 @@ def stt_launch_setup(context, *args, **kwargs):
                 'whisper_verbose':verbose,
                 'enable_synchronous_startup':whisper_sync_start,
                 'timer_period':whisper_cb_timer,
-                'whisper_model':whisper_def_model,                 # 'whisper_model':"openai/whisper-tiny.en",
+                'whisper_model':whisper_def_model,                
                 'whisper_startup':whisper_startup,
                 'wait_timeout':whisper_stt_timeout,
                 }
@@ -68,8 +72,8 @@ def generate_launch_description():
         #GLOBAL,
         DeclareLaunchArgument('verbose',default_value="false"),
         #VAD,
-        DeclareLaunchArgument('vad_timeout',default_value='3_000'),
-        DeclareLaunchArgument('vad_threshold',default_value='0.5'),
+        DeclareLaunchArgument('vad_timeout',default_value='1_500'),
+        DeclareLaunchArgument('vad_threshold',default_value='0.75'),
         DeclareLaunchArgument('disable_denoiser',default_value='false'),
         #WHISPER,
         DeclareLaunchArgument('whisper_startup',default_value='true'),

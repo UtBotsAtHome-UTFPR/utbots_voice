@@ -32,12 +32,12 @@ DEFAULT_PAR = {
                 # "no_repeat_ngram_size": 3 # Optional: avoid repeating phrases   
                 }
 
-    #             generate_kwargs={
-    #                 "language": "english",          # Force English language
-    #                 "task": "transcribe",      # or "translate"
-    #                 "beam_size": 5,            # Optional: beam search
-    #                 "temperature": 0.0,        # Optional: decoding temperature
-    #                 "no_repeat_ngram_size": 3 # Optional: avoid repeating phrases
+                #generate_kwargs={
+                #    "language": "english",          # Force English language
+                #    "task": "transcribe",      # or "translate"
+                #    "beam_size": 5,            # Optional: beam search
+                #    "temperature": 0.0,        # Optional: decoding temperature
+                #    "no_repeat_ngram_size": 3 # Optional: avoid repeating phrases
 
 class WhisperASR:
     def __init__(self,model=LV3_t,parameters=DEFAULT_PAR,load_def=True,verbose=False):
