@@ -26,7 +26,7 @@ def generate_launch_description():
                 {
                 #'speaking_mode':True,
                  #'speaking_mode':'en',
-                 'package_path':"/home/ehg2004/utbots_ws/src/utbots_voice/utbots_tts/ros_tts/",
+                 'package_path':"/home/laser/ros2_ws/src/utbots_voice/utbots_tts/ros_tts/",
                  'model_name': "tts_models/en/ljspeech/tacotron2-DDC",
                  'use_cuda':False,
                  'verbose':True,

@@ -3,26 +3,31 @@ from playsound import playsound
 import pandas as pd
 from pathlib import Path
 import time
-PATH="/home/ehg2004/utbots_ws/src/utbots_voice/utbots_tts/ros_tts/"
+PATH="/home/laser/ros2_ws/src/utbots_voice/utbots_tts/ros_tts/"
 
 class SpeechSynthModule:
     def __init__(self,
                  package_path: str = PATH,
                  model_name: str = "tts_models/en/ljspeech/tacotron2-DDC",
                  use_cuda: bool = True,
-                 verbose: bool = True):
+                 verbose: bool = True,
+                 language: str = 'en'):
         """
         package_path: root path to your ROS package
         model_name: Coqui model identifier or local path
         use_cuda: whether to use GPU acceleration
         verbose: whether to greet on init
         """
+        self.model_name= "tts_models/pt/cv/vits" if language=="pt-br" or language =="pt" or language=="br" \
+            else "tts_models/en/ljspeech/tacotron2-DDC"
+        # self.model_name="tts_models/multilingual/multi-dataset/xtts_v2"
         self.package_path = Path(package_path)
         self.verbose = verbose
         self.use_cuda = use_cuda
+        self.language=language
         
         # Initialize Coqui TTS
-        self.tts = TTS(model_name=model_name, progress_bar=False, gpu=self.use_cuda)
+        self.tts = TTS(model_name=self.model_name, progress_bar=False, gpu=self.use_cuda)
         
         # Prepare cache CSV
         self.csv_path = self.package_path / "resources/audios/indexed/index.csv"
@@ -39,12 +44,16 @@ class SpeechSynthModule:
     def save_cache(self):
         self.cache.to_csv(self.csv_path, index=False, sep="|")
 
-    def speak(self, text: str, language: str = "en"):
+    def speak(self, text: str, language = None):
         """
         Synthesize (or retrieve) and play a phrase.
         text: phrase to speak
         language: ISO code (e.g., 'en', 'pt-br')
         """
+        if(language is None):
+            language=self.language
+            print(f'Language: {language}')
+
         clean_text = text.replace("'", "").replace('"', "")
         # Check cache
         matched = self.cache[

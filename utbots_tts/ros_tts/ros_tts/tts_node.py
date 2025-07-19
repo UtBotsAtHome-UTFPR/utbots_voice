@@ -1,6 +1,6 @@
 import rclpy
 from rclpy.node import Node
-PATH="/home/ehg2004/utbots_ws/src/utbots_voice/utbots_tts/ros_tts/"
+PATH="/home/laser/ros2_ws/src/utbots_voice/utbots_tts/ros_tts/"
 from std_msgs.msg import String
 from  ros_tts.tts_module_small import SpeechSynthModule
 from ament_index_python.packages import get_package_share_directory
@@ -25,7 +25,7 @@ class CoquiTTSActionServer(Node):
         self.declare_parameter('use_cuda', False , ParameterDescriptor(description='use_cuda -> Bool'))
         self.declare_parameter('verbose', False , ParameterDescriptor(description='verbose -> Bool'))
 
-        self.declare_parameter('is_robot_talking', False , ParameterDescriptor(description=''))
+        self.declare_parameter('language','en',ParameterDescriptor(description='language -> string'))
         
         cb_group=MutuallyExclusiveCallbackGroup()
 
@@ -37,7 +37,8 @@ class CoquiTTSActionServer(Node):
                 package_path=self.package_share_directory,
                 model_name=self.get_parameter('model_name').get_parameter_value().string_value,
                 use_cuda=self.get_parameter('use_cuda').get_parameter_value().bool_value,
-                verbose=self.verbose
+                verbose=self.verbose,
+                language=self.get_parameter('language').get_parameter_value().string_value,
                 )
         self.disable_vad_cli = self.create_client(
             SetBool,
@@ -126,14 +127,17 @@ class CoquiTTSActionServer(Node):
         self.get_logger().info('Executing goal...')
         try:
             text = str(goal_handle.request.text.data)
-            self.get_logger().info(f"Sending request to disable VAD")
 
-            await self.send_request(True)  # ✅ async now
+            
+            if(self.disable_vad_cli.service_is_ready()):
+                self.get_logger().info(f"Sending request to disable VAD")
+                await self.send_request(True)  # ✅ async now
 
             self.tts_module.speak(text)
 
-            self.get_logger().info(f"Sending request to enable VAD")
-            await self.send_request(False)  # Uncomment if needed
+            if(self.disable_vad_cli.service_is_ready()):
+                self.get_logger().info(f"Sending request to enable VAD")
+                await self.send_request(False)  # Uncomment if needed
 
             goal_handle.succeed()
         except Exception as e:
