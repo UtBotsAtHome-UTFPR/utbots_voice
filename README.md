@@ -1,11 +1,15 @@
 # utbots_voice
 
+![Static Badge](https://img.shields.io/badge/ROS_Foxy-Not_Tested-red)
+![Static Badge](https://img.shields.io/badge/ROS_Humble-Tested-green)
+![Static Badge](https://img.shields.io/badge/ROS_Jazzy-Not_Tested-red)
+
 This stack contains packages related to human-robot interface, such as:
 
-- [display_emotions](https://github.com/UtBotsAtHome-UTFPR/display_emotions/tree/574f91eab071ab4ef88e66dae85b1703996774e3)
-- **utbots_stt**
-- **utbots_tts**
-- **[utbots_nlu](https://github.com/UtBotsAtHome-UTFPR/utbots_nlu)**
+- [display_emotions](https://github.com/UtBotsAtHome-UTFPR/display_emotions/tree/574f91eab071ab4ef88e66dae85b1703996774e3) - Emotion visual interface
+- **utbots_stt** - Speech-To-Text with noise filtering and Voice Activity Detection
+- **utbots_tts** - Text-To-Speech
+- **[utbots_nlu](https://github.com/UtBotsAtHome-UTFPR/utbots_nlu)** - Natural Language Understanding
 
 And is dependant on:
 
