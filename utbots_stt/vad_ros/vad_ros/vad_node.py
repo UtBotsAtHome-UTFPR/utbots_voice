@@ -142,20 +142,26 @@ class AudioPublisher(Node):
         if(speech_presence == True):
             #concatenate
             self.data = np.concatenate([self.data, audio_int16])
+
+            self.t_last=t_now
             
             if(self.is_speaking == False):
-                
-                self.t_last=t_now
 
                 self.is_speaking = True
-
+                self.t0 = t_now
                 if(self.vebose):
-                    self.get_logger().info(f"Runtime: {(t_now - self.t0)/(1_000_000)}")
+                    self.get_logger().info(f"Speaker detected!")
+            else:        
+                if(self.vebose):
+                    self.get_logger().info(f"Speaker is present, duration: {(t_now - self.t0)/(1_000_000)}")
 
-        elif(self.is_speaking == True ) : #speech_presence == False
+        elif(self.is_speaking == True): #speech_presence == False
+
             self.data = np.concatenate([self.data, audio_int16])
+
             if(self.vebose):
-                self.get_logger().info(f"Speaker absence: {(t_now - self.t_last)/(1_000_000)}")
+                self.get_logger().info(f"Speaker is absent, duration: {(t_now - self.t_last)/(1_000_000)}")
+
             if(t_now - self.t_last >= self.timeout ):
 
                 self.is_speaking = False
@@ -167,17 +173,12 @@ class AudioPublisher(Node):
                 if(self.vebose):
                     self.write2file(filtered_decimate)
 
-
                 msg = Int16MultiArray()
-                # print(f"Len: {len(filtered)} :{type(filtered)}: {type(filtered[0])}")
 
                 msg.data = filtered_decimate.tolist()
-                # if(self.TEST_WSP==True):
-                #     msg.data = self.sample.tolist()
-
 
                 self.publisher_.publish(msg)
-                self.get_logger().info('Publishing')
+                self.get_logger().info(f"Publishing, duration: {(t_now - self.t0)/(1_000_000)}")
 
                 #limpa buffer   
 
@@ -200,7 +201,6 @@ class AudioPublisher(Node):
     
     def decimate_cast(self, audio_int16_48khz):
         audio_float32 = self.int2float(audio_int16_48khz)
-        # decimated_audio=audio_float32
         decimated_audio=decimate(x=audio_float32,q=3,zero_phase=True)
         return self.float2int(decimated_audio)
 
@@ -208,7 +208,6 @@ class AudioPublisher(Node):
     
 
     def vad_evaluate(self, audio_float32):
-        # audio_float32 = self.int2float(audio_int16)
         new_confidence = self.model(torch.from_numpy(np.ascontiguousarray(audio_float32)), 16000).item()
         # if(self.vebose):
             # self.get_logger().info(f"Confidence: {new_confidence*100:.2f}")
@@ -230,15 +229,6 @@ class AudioPublisher(Node):
         sound = sound.squeeze()  # depends on the use case
         return sound
     
-    # def float2int(sound):
-    #     abs_max = np.abs(sound).max()
-    #     # sound = sound.astype('float32')
-    #     sound *= 32768
-    #     round(sound)
-    #     sound = sound.astype('int16')
-    #     sound = sound.squeeze()  # depends on the use case
-    #     return sound
-    
     def float2int(self,sound):
         """Convert float32 audio array (-1.0 to 1.0) to int16"""
         if not ((sound.dtype == np.float32) or (sound.dtype == np.float64)):
@@ -252,7 +242,9 @@ class AudioPublisher(Node):
         import wave
         import os
         # WAVE_OUTPUT_FILENAME = f"~/utbots_ws/.tmp/voice{self.i}.wav"
-        WAVE_OUTPUT_FILENAME = os.path.expanduser(f"~/utbots_ws/.tmp/voice{self.i}.wav")
+        # WAVE_OUTPUT_FILENAME = os.path.expanduser(f"~/utbots_ws/.tmp/voice{self.i}.wav")
+        os.makedirs("/tmp/utbots_voice/", exist_ok=True)
+        WAVE_OUTPUT_FILENAME = f"/tmp/utbots_voice/voice{self.i}.wav"
         self.i=self.i+1
         wf = wave.open(WAVE_OUTPUT_FILENAME, 'wb')
         wf.setnchannels(self.CHANNELS)
@@ -261,17 +253,6 @@ class AudioPublisher(Node):
         wf.writeframes(audio.tobytes())
         wf.close()
         self.get_logger().info(f"Wrote to: {WAVE_OUTPUT_FILENAME}")
-
-    #NEED TO BE REFORMULATED
-    # def test_whisper(self):
-    #     if(isinstance(self.dataset,None)):
-    #         self.dataset = load_dataset("distil-whisper/librispeech_long",
-    #                         "clean",
-    #                         split="validation",
-    #                         # cache_dir="../.hf-cache/datasets/"
-    #                         )
-    #         self.sample = self.dataset[0]["audio"]["array"]
-    #         self.TEST_WSP=True
         
     def remove_noise(self, audio_np):
         """Process entire audio signal through RNNoise"""
@@ -299,8 +280,6 @@ class AudioPublisher(Node):
                 processed.append(processed_frame)
                 # print(f"Len: {i} : {len(processed_frame)} : {type(processed_frame)}")
 
-        
-        # return np.frombuffer(b''.join(processed), dtype=np.int16)
         return np.concatenate(processed)
         
     def filter_frames(self, frame_bytes):
