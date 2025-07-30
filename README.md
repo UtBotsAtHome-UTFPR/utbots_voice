@@ -3,20 +3,18 @@
 This stack contains packages related to human-robot interface, such as:
 
 - [display_emotions](https://github.com/UtBotsAtHome-UTFPR/display_emotions/tree/574f91eab071ab4ef88e66dae85b1703996774e3)
-- [utbots_stt](https://github.com/UtBotsAtHome-UTFPR/utbots_voice/blob/master/utbots_stt)
-- [utbots_tts](https://github.com/UtBotsAtHome-UTFPR/utbots_voice/tree/master/utbots_tts)
-- [utbots_nlu](https://github.com/UtBotsAtHome-UTFPR/utbots_nlu)
+- **utbots_stt**
+- **utbots_tts**
+- **[utbots_nlu](https://github.com/UtBotsAtHome-UTFPR/utbots_nlu)**
 
 And is dependant on:
 
 - [utbots_dependencies](https://github.com/UtBotsAtHome-UTFPR/utbots_dependencies)
 
-See the [demonstration](https://www.youtube.com/watch?v=4TaugaMfJ-8)!
-
 ## Installation
 
 ```bash 
-cd catkin_ws/src
+cd <ros2_ws>/src
 git clone --recurse-submodules https://github.com/UtBotsAtHome-UTFPR/utbots_voice.git
 cd ../
 ```
@@ -28,7 +26,11 @@ See the dependencies installation procedure for each package accessing its READM
 ### Building
 
 ```bash
-catkin_make -DCMAKE_BUILD_TYPE=Release
+cd <ros2_ws>
+rosdep install --from-paths src --ignore-src -r -y
+colcon build --packages-select display_emotions utbots_nlu ros_tts vad_ros whisper_ros utbots_actions utbots_srvs utbots_msgs \
+--allow-overriding utbots_msgs utbots_actions utbots_srvs \
+&& source install/setup.bash
 ```
 
 ### Updating

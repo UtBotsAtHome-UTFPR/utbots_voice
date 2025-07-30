@@ -6,11 +6,15 @@
   - Continuously performs Voice Activity Detection (VAD) on your microphone
   - If it contains human voice, waits for a whole sentence to be completed
   - Then publishes "voiced audio" to a ROS topic
+  - Integration with [RNNoise](https://github.com/xiph/rnnoise) increases noise robustness
   - [Demonstration](https://www.youtube.com/watch?v=CYQ5u8lt4v8)
 
-- **ROS wrapper for [whisper (HF's Transformers)]**
-  - Heavyweight implementation of OpenAI's Whisper
-  - Performs speech recogition
+- **ROS wrapper for [Whisper (HF's Transformers)](  https://huggingface.co/openai/whisper-large-v3-turbo
+)**
+  - Heavyweight implementation of OpenAI's Whisper Turbo V3
+  - Performs speech recognition
+  - Synchronous transcription activated/deactivated with ROS services
+  - Assynchronous single transcription with ROS actions
   - [Demonstration](https://www.youtube.com/watch?v=3EmWbu2jJg0)
 
 ![alt text](image-1.png)
@@ -19,28 +23,69 @@
 
 ### Dependencies
 
+If utbots_dependencies not already installed:
+
 ```bash
+cd <ros2_ws>/src
+git clone https://github.com/UtBotsAtHome-UTFPR/utbots_dependencies.git
+cd ../
+```
 
-##For whisper:
+#### Python
+To avoid conflicts between package dependencies, we use virtual environments. Change the virtuelenv path in the `executable` field in `setup.cfg`. *Not the ideal solution, but the current one while we don't use Docker*.
+
+If you haven't installed `virtualenv`:
+```bash
+pip3 install virtualenv
+```
+
+Create and activate env:
+```bash
+python -m virtualenv <env_path>
+source <env_path>/bin/activate
+```
+
+#### Whisper
+```bash
 pip install --upgrade transformers accelerate
+## Extra: 
+pip install flash-attn --no-build-isolation ## May not work
+```
 
-##Extra: pip install flash-attn --no-build-isolation ## May not work
+#### Silero VAD
+For noise suppression ([RNNoise](https://github.com/xiph/rnnoise)):
+```bash
+cd ~/
+git clone https://github.com/xiph/rnnoise.git
+cd rnnoise/
+./autogen.sh
+./configure
+make
+pip install git+https://github.com/Desklop/RNNoise_Wrapper.git
+```
 
+Installing Silero dependencies
+```bash
+pip install -r requirements.txt
+sudo apt install portaudio19-dev
+pip install pyaudio
 ```
 
 ## Building recomended:
 
 ```bash
+cd <ros2_ws>
 colcon build --packages-select vad_ros whisper_ros utbots_actions utbots_srvs utbots_msgs \
 --allow-overriding utbots_msgs utbots_actions utbots_srvs \
-&& source install/setup.bash \
-## --symlink-install \ ## if possible
-
-## \
-## --symlink-install ## if possible
+&& source install/setup.bash
 ```
 
 ## Running
+
+Run all STT launch [RNNoise + VAD + Whisper] (check for available parameters in the launch file):
+```bash
+ros2 launch vad_ros stt_launch.py
+```
 
 Run VAD node
 ```bash
@@ -49,15 +94,9 @@ ros2 run vad_ros vad_node
 
 Run Whisper node
 ```bash
-ros2 run whisper_ros whisper_node
-#or
 ros2 run whisper_ros whisper_full_node
-```
-
-Run basic STT launch
-```bash
-#setup stt_launch.py for using whisper or whisper full
-ros2 launch  vad_ros stt_launch.py
+# or
+ros2 run whisper_ros whisper_node
 ```
 
 ## Parameters
@@ -84,49 +123,22 @@ ros2 param dump /whisper_node #full
 ```
 
 
-## Service
+## Services
+To toggle whisper sync transcription on/off:
 ```bash
-#To toggle whisper sync transcription on/off
 ros2 service call /utbots/voice/enable_transcription std_srvs/srv/SetBool data:\ false\
-##
-
-
-##CURRENTLY NOT WORKING IN SHELL:
+```
+Change the Whisper model (CURRENTLY NOT WORKING IN SHELL):
+```bash
 ros2 service call /whisper_model utbots_srvs/srv/SetString string:\ \ data:\ \'\'\
-
 ```
 
 ## Actions
+To call the Transcription action server (12 seconds of timeout):
 ```bash
-#To call the Transcription action server (12 s of timeout)
 ros2 action send_goal /Transcription utbots_actions/action/Transcription {}\ 
 ```
 
 #### TODO:
 - Evaluate  **Distil-Whisper: Distil-Large-v3.5**
   https://huggingface.co/distil-whisper/distil-large-v3.5
-- Requirements for Whisper, VAD and RNNoise instalation
-
-#### TODO (how to do):
-- install RNNoise ( make install ! ) (( https://github.com/xiph/rnnoise ))
-- install RNNoise_Wrapper (https://github.com/dbklim/RNNoise_Wrapper)
-- see vad silero notebook ( https://github.com/snakers4/silero-vad/blob/master/examples/pyaudio-streaming/pyaudio-streaming-examples.ipynb )
-
-
-###### References:
-
-HF Model Card:
-  https://huggingface.co/openai/whisper-large-v3-turbo
-
-Original Paper:
-  ```
-  @misc{radford2022whisper,
-    doi = {10.48550/ARXIV.2212.04356},
-    url = {https://arxiv.org/abs/2212.04356},
-    author = {Radford, Alec and Kim, Jong Wook and Xu, Tao and Brockman, Greg and McLeavey, Christine and Sutskever, Ilya},
-    title = {Robust Speech Recognition via Large-Scale Weak Supervision},
-    publisher = {arXiv},
-    year = {2022},
-    copyright = {arXiv.org perpetual, non-exclusive license}
-  }
-  ``` 
