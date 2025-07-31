@@ -7,6 +7,8 @@ utbots_stt/vad_ros/.vscode
 utbots_stt/vad_ros/snakers4_silero-vad_master
 utbots_stt/vad_ros/vad_ros/__pycache__
 utbots_stt/vad_ros/vad_ros/.test
+utbots_stt/vad_ros/RNNoise_Wrapper
+utbots_stt/vad_ros/rnnoise
 utbots_stt/whisper_ros/whisper_ros/.hf-cache
 utbots_stt/whisper_ros/whisper_ros/.test
 utbots_tts/.src
