@@ -1,5 +1,7 @@
 #!/bin/bash
 
+PKG_PATH=$(pwd)
+
 set -e  # Exit on error
 
 # === Step 1: Extract the Python executable path ===
@@ -38,7 +40,8 @@ echo "Installing RNNoise_Wrapper..."
 echo "Installing Silero VAD dependencies..."
 
 # Assuming requirements.txt is in the same directory as the script
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SCRIPT_DIR="$(cd "$PKG_PATH" && pwd)"
+echo "${SCRIPT_DIR}"
 REQUIREMENTS_FILE="$SCRIPT_DIR/requirements.txt"
 
 if [ ! -f "$REQUIREMENTS_FILE" ]; then
