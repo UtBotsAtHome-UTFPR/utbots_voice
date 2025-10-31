@@ -143,7 +143,11 @@ class CoquiTTSActionServer(Node):
         except Exception as e:
             self.get_logger().error(f"Error processing Goal: {str(e)}")
             goal_handle.abort()
-
+        
+        from action_msgs.msg import GoalStatus
+        if goal_handle.status == GoalStatus.STATUS_SUCCEEDED:
+            self.get_logger().info("Goal succeeded!")
+        self.get_logger().info(f"Goal handle attributes: {dir(goal_handle)}")
         return TextToSpeech.Result()
 
 from rclpy.executors import MultiThreadedExecutor
