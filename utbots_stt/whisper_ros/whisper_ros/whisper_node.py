@@ -5,7 +5,6 @@ from rclpy.node import Node
 from rclpy.callback_groups import MutuallyExclusiveCallbackGroup
 from std_msgs.msg import String
 from std_msgs.msg import Int16MultiArray
-# from utbots_srvs.srv import ManageModel  # Replace with your service definition
 from utbots_srvs.srv import LoadModel
 
 
