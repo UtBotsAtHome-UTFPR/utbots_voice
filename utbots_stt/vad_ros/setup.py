@@ -20,7 +20,6 @@ setup(
     maintainer_email='ehg2004@todo.todo',
     description='TODO: Package description',
     license='TODO: License declaration',
-    # tests_require=['pytest'],
     entry_points={
         'console_scripts': [
             'vad_node = vad_ros.vad_node:main'
