@@ -1,9 +1,24 @@
+#!/usr/bin/env python3
+
+# Configure Python path para usar o virtual environment
+import sys
+import os
+VENV_PYTHON = "/home/joao/tts_env/bin/python3"
+if os.path.exists(VENV_PYTHON):
+    VENV_SITE_PACKAGES = "/home/joao/tts_env/lib/python3.10/site-packages"
+    if VENV_SITE_PACKAGES not in sys.path:
+        sys.path.insert(0, VENV_SITE_PACKAGES)
+
 from TTS.api import TTS
 from playsound import playsound
 import pandas as pd
 from pathlib import Path
 import time
-PATH="/home/laser/ros2_ws/src/utbots_voice/utbots_tts/ros_tts/"
+
+# Get package share directory dynamically
+from ament_index_python.packages import get_package_share_directory
+PACKAGE_SHARE_DIR = get_package_share_directory('ros_tts')
+PATH = os.path.join(PACKAGE_SHARE_DIR, '../../../../src/utbots_voice/utbots_tts/ros_tts/')
 
 class SpeechSynthModule:
     def __init__(self,
@@ -90,16 +105,9 @@ class SpeechSynthModule:
         # Play
         playsound(str(out_path))
 
-# from speech_synth_module import SpeechSynthModule  # Adjust import if needed
-import os
-
 def main():
-    # Set the absolute path to the package directory
-    # package_path = os.path.abspath(".")
-    package_path=PATH
     # Initialize the speech synthesis module
-    tts_module = SpeechSynthModule(
-    )
+    tts_module = SpeechSynthModule()
 
     # Example phrases to test
     test_phrases = [

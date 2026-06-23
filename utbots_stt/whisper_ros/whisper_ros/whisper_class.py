@@ -26,191 +26,163 @@ DEFAULT_PAR = {
                 "temperature": 0.0,
                 # "logprob_threshold": -1.0,
                 # "no_speech_threshold": 0.8,
-                "return_timestamps": False,
-                "language": "english",          # Force English language
-                "task": "transcribe",      # or "transcribe"
+                
+                # Mantém 'True' para áudios longos (como discutido)
+                "return_timestamps": True,
+                
+                # --- CORRIGIDO PARA INGLÊS ---
+                #"language": "english",          # Ativado para forçar Inglês
+                "language": "portuguese",
+                "task": "transcribe",           # Ativado
+                
                 # "no_repeat_ngram_size": 3 # Optional: avoid repeating phrases   
                 }
 
                 #generate_kwargs={
-                #    "language": "english",          # Force English language
-                #    "task": "transcribe",      # or "translate"
-                #    "beam_size": 5,            # Optional: beam search
-                #    "temperature": 0.0,        # Optional: decoding temperature
-                #    "no_repeat_ngram_size": 3 # Optional: avoid repeating phrases
+                #    "language": "english",
+                #    "task": "transcribe",
+                #}
 
 class WhisperASR:
-    def __init__(self,model=LV3_t,parameters=DEFAULT_PAR,load_def=True,verbose=False):
-        self.model_name = model
-        self.model = None
-        self.processor = None
-        self.pipe = None
-        self.verbose=verbose
-        self.generate_kwargs=None
-        self.device = "cuda:0" if torch.cuda.is_available() else "cpu"
-        self.torch_dtype = torch.float16 if torch.cuda.is_available() else torch.float32
-        self.local_model_dir = LOCAL_MODEL_DIR
+    def __init__(self, model="openai/whisper-tiny.en", verbose=False):
+        self.verbose = verbose
+        if(self.verbose):
+            print("Loading model...")
+
+        self.par = DEFAULT_PAR.copy()
         
-        # Create local model directory if it doesn't exist
-        os.makedirs(self.local_model_dir, exist_ok=True)
+        # Check if the model is local first
+        local_path = self.get_local_model_path(model)
         
-        if(load_def==True):
-            self.load_model(model,parameters)
-
-    def download_model_locally(self, model_id, force_download=False):
-        """Download model to local directory using huggingface_hub"""
-        try:
-            # Create model-specific directory
-            model_local_path = os.path.join(self.local_model_dir, model_id.replace("/", "_"))
-            
-            # Check if model already exists locally
-            if os.path.exists(model_local_path) and not force_download:
+        if local_path and os.path.exists(local_path):
+            if self.verbose:
+                print(f"Loading model from local storage: {local_path}")
+            model_path = local_path
+            # Check if using "large-v3-turbo" and set torch_dtype
+            if "large-v3-turbo" in model:
                 if self.verbose:
-                    print(f"Model {model_id} already exists locally at {model_local_path}")
-                return model_local_path
-            
-            print(f"Downloading model {model_id} to {model_local_path}...")
-            
-            # Download the entire model repository
-            snapshot_download(
-                repo_id=model_id,
-                local_dir=model_local_path,
-                local_dir_use_symlinks=False,
-                resume_download=True
-            )
-            
-            print(f"Model {model_id} successfully downloaded to {model_local_path}")
-            return model_local_path
-            
-        except Exception as e:
-            print(f"Error downloading model {model_id}: {str(e)}")
-            return None
-
-    def get_local_model_path(self, model_id):
-        """Get the local path for a model"""
-        model_local_path = os.path.join(self.local_model_dir, model_id.replace("/", "_"))
-        return model_local_path if os.path.exists(model_local_path) else None
-
-    def load_model(self, model_id=LV3_t,parameters=DEFAULT_PAR):
-        """Load model into memory from local directory"""
-        try:
-            # First check if model exists locally
-            local_path = self.get_local_model_path(model_id)
-            
-            if local_path is None:
-                # Model doesn't exist locally, download it
-                if self.verbose:
-                    print(f"Model {model_id} not found locally, downloading...")
-                local_path = self.download_model_locally(model_id)
-                
-                if local_path is None:
-                    raise Exception(f"Failed to download model {model_id}")
+                    print("Model is large-v3-turbo, setting torch_dtype to float16")
+                torch_dtype = torch.float16
             else:
+                torch_dtype = torch.float32  # Default dtype for other models
+
+        else:
+            if self.verbose:
+                print(f"Model not found locally. Downloading and caching: {model}")
+            
+            # Check if using "large-v3-turbo" and set torch_dtype
+            if "large-v3-turbo" in model:
                 if self.verbose:
-                    print(f"Using local model at {local_path}")
-            
-            # Load model from local path
-            self.model = AutoModelForSpeechSeq2Seq.from_pretrained(
-                local_path,
-                torch_dtype=self.torch_dtype,
-                low_cpu_mem_usage=True,
-                use_safetensors=True,
-                local_files_only=True  # Force using local files only
-                # attn_implementation="flash_attention_2"
-            ).to(self.device)
-            
-            self.processor = AutoProcessor.from_pretrained(
-                local_path,
-                local_files_only=True  # Force using local files only
+                    print("Model is large-v3-turbo, setting torch_dtype to float16")
+                torch_dtype = torch.float16
+            else:
+                torch_dtype = torch.float32  # Default dtype for other models
+
+            # Use snapshot_download to cache the model to the default transformers cache
+            # This also avoids re-downloading if already in the transformers cache
+            try:
+                model_path = snapshot_download(repo_id=model, cache_dir=LOCAL_MODEL_DIR)
+                if self.verbose:
+                    print(f"Model downloaded to: {model_path}")
+            except Exception as e:
+                if self.verbose:
+                    print(f"Failed to download model {model}. Error: {str(e)}")
+                return
+
+        # Set device
+        self.device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+        if self.verbose:
+            print(f"Device set to use {self.device}")
+
+        # Load model and processor
+        try:
+            model_obj = AutoModelForSpeechSeq2Seq.from_pretrained(
+                model_path, torch_dtype=torch_dtype, low_cpu_mem_usage=True, use_safetensors=True
             )
-            
+            model_obj.to(self.device)
+
+            processor = AutoProcessor.from_pretrained(model_path)
+
             self.pipe = pipeline(
                 "automatic-speech-recognition",
-                model=self.model,
-                tokenizer=self.processor.tokenizer,
-                feature_extractor=self.processor.feature_extractor,
+                model=model_obj,
+                tokenizer=processor.tokenizer,
+                feature_extractor=processor.feature_extractor,
+                max_new_tokens=128,
+                chunk_length_s=CHUNK_LENGHT,
+                batch_size=BATCH,
+                return_timestamps=self.par.get("return_timestamps", False),
+                torch_dtype=torch_dtype,
                 device=self.device,
-                torch_dtype=self.torch_dtype,
             )
+            
+            if self.verbose:
+                if "large-v3-turbo" in model:
+                    print(f"Model {model} successfully loaded from local storage with float16")
+                else:
+                    print(f"Model {model} successfully loaded from local storage")
+                    
+        except Exception as e:
+            if self.verbose:
+                print(f"Failed to load model {model}. Error: {str(e)}")
 
-            self.generate_kwargs=parameters
-            
-            print(f"Model {model_id} successfully loaded from local storage")
-        except Exception as e:
-            print(f"Error loading model: {str(e)}")
-            self.unload_model()
-    
-    def unload_model(self):
-        """Completely unload model from memory"""
-        try:
-            # Delete pipeline first
-            if self.pipe is not None:
-                del self.pipe
-                self.pipe = None
-            
-            # Delete model and processor
-            if self.model is not None:
-                del self.model
-                self.model = None
-                
-            if self.processor is not None:
-                del self.processor
-                self.processor = None
-            
-            # Clear GPU cache if available
-            if torch.cuda.is_available():
-                torch.cuda.empty_cache()
-            self.generate_kwargs=DEFAULT_PAR
-            # Run garbage collection
-            gc.collect()
-            print("Model successfully unloaded")
-        except Exception as e:
-            print(f"Error unloading model: {str(e)}")
-    
-    def transcribe(self, audio):
-        """Run transcription if model is loaded"""
-        if self.pipe is None:
-            print("Error: Model not loaded")
-            return None
+    def __del__(self):
+        if(self.verbose):
+            print("Deleting model...")
+        gc.collect()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        if(self.verbose):
+            print("Model deleted.")
+
+    def transcribe(self, audio_np):
+        if(self.verbose):
+            print("Transcribing...")
+        #preprocess
+        audio_np = audio_np.astype(np.float32) / 32768.0
         
+        # --- (Esta correção de segurança que fizemos antes mantém-se) ---
         try:
-            audio_padded = self.audio_padding(audio=audio)
-            result=self.pipe(audio_padded,
-                            generate_kwargs = self.generate_kwargs)
-            print(result["text"])
-            return result
+            results = self.pipe(audio_np, generate_kwargs=self.par)
         except Exception as e:
+            # Se a pipeline falhar (ex: erro de config), não trave
             print(f"Transcription error: {str(e)}")
-            return None
+            results = None # Retorne None em vez de travar
 
-    def audio_padding(self,audio):
-        zero_padding = 30
-        #SAMPLE_R : 16kHz
-        if audio.shape[-1] < SAMPLE_R * zero_padding:
-            pad_length = SAMPLE_R * zero_padding - audio.shape[-1]
+        # VERIFICAÇÃO DE SEGURANÇA ADICIONADA
+        if not results:
             if(self.verbose):
-                print("audio padded!")
-            return(np.pad(audio, (0, pad_length), mode="constant"))
-        return audio
-    
-    def list_local_models(self):
-        """List all locally downloaded models"""
-        if not os.path.exists(self.local_model_dir):
-            return []
+                print("Transcription returned None or failed.")
+            # Retorna um dicionário seguro para que o nó principal não trave
+            return {"text": ""} 
+
+        if(self.verbose):
+            print("Transcription complete.")
+        return results
         
-        local_models = []
-        for item in os.listdir(self.local_model_dir):
-            item_path = os.path.join(self.local_model_dir, item)
-            if os.path.isdir(item_path):
-                # Convert back to original model name format
-                model_name = item.replace("_", "/")
-                local_models.append(model_name)
-        return local_models
+    def get_local_model_path(self, model_id):
+        """Get the local path for a model"""
+        return os.path.join(LOCAL_MODEL_DIR, model_id.replace("/", "_"))
+
+    def download_model(self, model_id):
+        """Download and store a model locally"""
+        local_path = self.get_local_model_path(model_id)
+        if not os.path.exists(local_path):
+            try:
+                print(f"Downloading model {model_id} to {local_path}...")
+                snapshot_download(repo_id=model_id, local_dir=local_path, local_dir_use_symlinks=False)
+                print(f"Model {model_id} downloaded successfully.")
+                return True
+            except Exception as e:
+                print(f"Error downloading model {model_id}: {str(e)}")
+                return False
+        else:
+            print(f"Model {model_id} already exists locally.")
+            return True
 
     def remove_local_model(self, model_id):
-        """Remove a locally downloaded model"""
+        """Remove a locally stored model"""
         import shutil
-        
         local_path = self.get_local_model_path(model_id)
         if local_path and os.path.exists(local_path):
             try:
